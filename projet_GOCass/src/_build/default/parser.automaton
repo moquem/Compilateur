@@ -1,0 +1,1833 @@
+State 0:
+file' -> . file [ # ]
+-- On PACKAGE shift to state 1
+-- On file shift to state 152
+
+State 1:
+file -> PACKAGE . ident_main SEMICOLON boption(import_fmt) list(decl) EOF [ # ]
+-- On IDENT shift to state 2
+-- On ident_main shift to state 3
+-- On ident shift to state 151
+
+State 2:
+ident -> IDENT . [ VERTICALBARVERTICALBAR STRUCT STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTPAR LEFTBRACE IDENT EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production ident -> IDENT 
+-- On STRUCT reduce production ident -> IDENT 
+-- On STAR reduce production ident -> IDENT 
+-- On SLASH reduce production ident -> IDENT 
+-- On SEMICOLON reduce production ident -> IDENT 
+-- On RIGHTPAR reduce production ident -> IDENT 
+-- On RIGHTBRACE reduce production ident -> IDENT 
+-- On PLUSPLUS reduce production ident -> IDENT 
+-- On PLUS reduce production ident -> IDENT 
+-- On PERCENT reduce production ident -> IDENT 
+-- On MINUSMINUS reduce production ident -> IDENT 
+-- On MINUS reduce production ident -> IDENT 
+-- On LEFTPAR reduce production ident -> IDENT 
+-- On LEFTBRACE reduce production ident -> IDENT 
+-- On IDENT reduce production ident -> IDENT 
+-- On EQ reduce production ident -> IDENT 
+-- On DOT reduce production ident -> IDENT 
+-- On COMP reduce production ident -> IDENT 
+-- On COMMA reduce production ident -> IDENT 
+-- On COLONEQ reduce production ident -> IDENT 
+-- On AMPERSANDAMPERSAND reduce production ident -> IDENT 
+
+State 3:
+file -> PACKAGE ident_main . SEMICOLON boption(import_fmt) list(decl) EOF [ # ]
+-- On SEMICOLON shift to state 4
+
+State 4:
+file -> PACKAGE ident_main SEMICOLON . boption(import_fmt) list(decl) EOF [ # ]
+-- On IMPORT shift to state 5
+-- On import_fmt shift to state 8
+-- On boption(import_fmt) shift to state 9
+-- On TYPE reduce production boption(import_fmt) -> 
+-- On FUNC reduce production boption(import_fmt) -> 
+-- On EOF reduce production boption(import_fmt) -> 
+
+State 5:
+import_fmt -> IMPORT . STRING SEMICOLON [ TYPE FUNC EOF ]
+-- On STRING shift to state 6
+
+State 6:
+import_fmt -> IMPORT STRING . SEMICOLON [ TYPE FUNC EOF ]
+-- On SEMICOLON shift to state 7
+
+State 7:
+import_fmt -> IMPORT STRING SEMICOLON . [ TYPE FUNC EOF ]
+-- On TYPE reduce production import_fmt -> IMPORT STRING SEMICOLON 
+-- On FUNC reduce production import_fmt -> IMPORT STRING SEMICOLON 
+-- On EOF reduce production import_fmt -> IMPORT STRING SEMICOLON 
+
+State 8:
+boption(import_fmt) -> import_fmt . [ TYPE FUNC EOF ]
+-- On TYPE reduce production boption(import_fmt) -> import_fmt 
+-- On FUNC reduce production boption(import_fmt) -> import_fmt 
+-- On EOF reduce production boption(import_fmt) -> import_fmt 
+
+State 9:
+file -> PACKAGE ident_main SEMICOLON boption(import_fmt) . list(decl) EOF [ # ]
+-- On TYPE shift to state 10
+-- On FUNC shift to state 30
+-- On list(decl) shift to state 147
+-- On decl shift to state 149
+-- On EOF reduce production list(decl) -> 
+
+State 10:
+decl -> TYPE . ident STRUCT LEFTBRACE loption(fields) RIGHTBRACE SEMICOLON [ TYPE FUNC EOF ]
+-- On IDENT shift to state 2
+-- On ident shift to state 11
+
+State 11:
+decl -> TYPE ident . STRUCT LEFTBRACE loption(fields) RIGHTBRACE SEMICOLON [ TYPE FUNC EOF ]
+-- On STRUCT shift to state 12
+
+State 12:
+decl -> TYPE ident STRUCT . LEFTBRACE loption(fields) RIGHTBRACE SEMICOLON [ TYPE FUNC EOF ]
+-- On LEFTBRACE shift to state 13
+
+State 13:
+decl -> TYPE ident STRUCT LEFTBRACE . loption(fields) RIGHTBRACE SEMICOLON [ TYPE FUNC EOF ]
+-- On IDENT shift to state 2
+-- On separated_nonempty_list(COMMA,ident) shift to state 14
+-- On loption(fields) shift to state 19
+-- On ids_and_type shift to state 22
+-- On ident shift to state 24
+-- On fields shift to state 29
+-- On RIGHTBRACE reduce production loption(fields) -> 
+
+State 14:
+ids_and_type -> separated_nonempty_list(COMMA,ident) . type_expr [ SEMICOLON RIGHTPAR RIGHTBRACE COMMA ]
+-- On STAR shift to state 15
+-- On IDENT shift to state 2
+-- On type_expr shift to state 18
+-- On ident shift to state 17
+
+State 15:
+type_expr -> STAR . type_expr [ SEMICOLON RIGHTPAR RIGHTBRACE LEFTBRACE EQ COMMA ]
+-- On STAR shift to state 15
+-- On IDENT shift to state 2
+-- On type_expr shift to state 16
+-- On ident shift to state 17
+
+State 16:
+type_expr -> STAR type_expr . [ SEMICOLON RIGHTPAR RIGHTBRACE LEFTBRACE EQ COMMA ]
+-- On SEMICOLON reduce production type_expr -> STAR type_expr 
+-- On RIGHTPAR reduce production type_expr -> STAR type_expr 
+-- On RIGHTBRACE reduce production type_expr -> STAR type_expr 
+-- On LEFTBRACE reduce production type_expr -> STAR type_expr 
+-- On EQ reduce production type_expr -> STAR type_expr 
+-- On COMMA reduce production type_expr -> STAR type_expr 
+
+State 17:
+type_expr -> ident . [ SEMICOLON RIGHTPAR RIGHTBRACE LEFTBRACE EQ COMMA ]
+-- On SEMICOLON reduce production type_expr -> ident 
+-- On RIGHTPAR reduce production type_expr -> ident 
+-- On RIGHTBRACE reduce production type_expr -> ident 
+-- On LEFTBRACE reduce production type_expr -> ident 
+-- On EQ reduce production type_expr -> ident 
+-- On COMMA reduce production type_expr -> ident 
+
+State 18:
+ids_and_type -> separated_nonempty_list(COMMA,ident) type_expr . [ SEMICOLON RIGHTPAR RIGHTBRACE COMMA ]
+-- On SEMICOLON reduce production ids_and_type -> separated_nonempty_list(COMMA,ident) type_expr 
+-- On RIGHTPAR reduce production ids_and_type -> separated_nonempty_list(COMMA,ident) type_expr 
+-- On RIGHTBRACE reduce production ids_and_type -> separated_nonempty_list(COMMA,ident) type_expr 
+-- On COMMA reduce production ids_and_type -> separated_nonempty_list(COMMA,ident) type_expr 
+
+State 19:
+decl -> TYPE ident STRUCT LEFTBRACE loption(fields) . RIGHTBRACE SEMICOLON [ TYPE FUNC EOF ]
+-- On RIGHTBRACE shift to state 20
+
+State 20:
+decl -> TYPE ident STRUCT LEFTBRACE loption(fields) RIGHTBRACE . SEMICOLON [ TYPE FUNC EOF ]
+-- On SEMICOLON shift to state 21
+
+State 21:
+decl -> TYPE ident STRUCT LEFTBRACE loption(fields) RIGHTBRACE SEMICOLON . [ TYPE FUNC EOF ]
+-- On TYPE reduce production decl -> TYPE ident STRUCT LEFTBRACE loption(fields) RIGHTBRACE SEMICOLON 
+-- On FUNC reduce production decl -> TYPE ident STRUCT LEFTBRACE loption(fields) RIGHTBRACE SEMICOLON 
+-- On EOF reduce production decl -> TYPE ident STRUCT LEFTBRACE loption(fields) RIGHTBRACE SEMICOLON 
+
+State 22:
+fields -> ids_and_type . option(SEMICOLON) [ RIGHTBRACE ]
+fields -> ids_and_type . SEMICOLON fields [ RIGHTBRACE ]
+-- On SEMICOLON shift to state 23
+-- On option(SEMICOLON) shift to state 28
+-- On RIGHTBRACE reduce production option(SEMICOLON) -> 
+
+State 23:
+fields -> ids_and_type SEMICOLON . fields [ RIGHTBRACE ]
+option(SEMICOLON) -> SEMICOLON . [ RIGHTBRACE ]
+-- On IDENT shift to state 2
+-- On separated_nonempty_list(COMMA,ident) shift to state 14
+-- On ids_and_type shift to state 22
+-- On ident shift to state 24
+-- On fields shift to state 27
+-- On RIGHTBRACE reduce production option(SEMICOLON) -> SEMICOLON 
+
+State 24:
+separated_nonempty_list(COMMA,ident) -> ident . [ STAR SEMICOLON RIGHTBRACE IDENT EQ ]
+separated_nonempty_list(COMMA,ident) -> ident . COMMA separated_nonempty_list(COMMA,ident) [ STAR SEMICOLON RIGHTBRACE IDENT EQ ]
+-- On COMMA shift to state 25
+-- On STAR reduce production separated_nonempty_list(COMMA,ident) -> ident 
+-- On SEMICOLON reduce production separated_nonempty_list(COMMA,ident) -> ident 
+-- On RIGHTBRACE reduce production separated_nonempty_list(COMMA,ident) -> ident 
+-- On IDENT reduce production separated_nonempty_list(COMMA,ident) -> ident 
+-- On EQ reduce production separated_nonempty_list(COMMA,ident) -> ident 
+
+State 25:
+separated_nonempty_list(COMMA,ident) -> ident COMMA . separated_nonempty_list(COMMA,ident) [ STAR SEMICOLON RIGHTBRACE IDENT EQ ]
+-- On IDENT shift to state 2
+-- On separated_nonempty_list(COMMA,ident) shift to state 26
+-- On ident shift to state 24
+
+State 26:
+separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident) . [ STAR SEMICOLON RIGHTBRACE IDENT EQ ]
+-- On STAR reduce production separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident) 
+-- On SEMICOLON reduce production separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident) 
+-- On RIGHTBRACE reduce production separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident) 
+-- On IDENT reduce production separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident) 
+-- On EQ reduce production separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident) 
+
+State 27:
+fields -> ids_and_type SEMICOLON fields . [ RIGHTBRACE ]
+-- On RIGHTBRACE reduce production fields -> ids_and_type SEMICOLON fields 
+
+State 28:
+fields -> ids_and_type option(SEMICOLON) . [ RIGHTBRACE ]
+-- On RIGHTBRACE reduce production fields -> ids_and_type option(SEMICOLON) 
+
+State 29:
+loption(fields) -> fields . [ RIGHTBRACE ]
+-- On RIGHTBRACE reduce production loption(fields) -> fields 
+
+State 30:
+decl -> FUNC . ident LEFTPAR loption(parameters) RIGHTPAR loption(return_type) block SEMICOLON [ TYPE FUNC EOF ]
+-- On IDENT shift to state 2
+-- On ident shift to state 31
+
+State 31:
+decl -> FUNC ident . LEFTPAR loption(parameters) RIGHTPAR loption(return_type) block SEMICOLON [ TYPE FUNC EOF ]
+-- On LEFTPAR shift to state 32
+
+State 32:
+decl -> FUNC ident LEFTPAR . loption(parameters) RIGHTPAR loption(return_type) block SEMICOLON [ TYPE FUNC EOF ]
+-- On IDENT shift to state 2
+-- On separated_nonempty_list(COMMA,ident) shift to state 14
+-- On parameters shift to state 33
+-- On loption(parameters) shift to state 34
+-- On ids_and_type shift to state 143
+-- On ident shift to state 24
+-- On RIGHTPAR reduce production loption(parameters) -> 
+
+State 33:
+loption(parameters) -> parameters . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production loption(parameters) -> parameters 
+
+State 34:
+decl -> FUNC ident LEFTPAR loption(parameters) . RIGHTPAR loption(return_type) block SEMICOLON [ TYPE FUNC EOF ]
+-- On RIGHTPAR shift to state 35
+
+State 35:
+decl -> FUNC ident LEFTPAR loption(parameters) RIGHTPAR . loption(return_type) block SEMICOLON [ TYPE FUNC EOF ]
+-- On STAR shift to state 15
+-- On LEFTPAR shift to state 36
+-- On IDENT shift to state 2
+-- On type_expr shift to state 43
+-- On return_type shift to state 44
+-- On loption(return_type) shift to state 45
+-- On ident shift to state 17
+-- On LEFTBRACE reduce production loption(return_type) -> 
+
+State 36:
+return_type -> LEFTPAR . return_types RIGHTPAR [ LEFTBRACE ]
+-- On STAR shift to state 15
+-- On IDENT shift to state 2
+-- On type_expr shift to state 37
+-- On return_types shift to state 41
+-- On ident shift to state 17
+
+State 37:
+return_types -> type_expr . option(COMMA) [ RIGHTPAR ]
+return_types -> type_expr . COMMA return_types [ RIGHTPAR ]
+-- On COMMA shift to state 38
+-- On option(COMMA) shift to state 40
+-- On RIGHTPAR reduce production option(COMMA) -> 
+
+State 38:
+option(COMMA) -> COMMA . [ RIGHTPAR ]
+return_types -> type_expr COMMA . return_types [ RIGHTPAR ]
+-- On STAR shift to state 15
+-- On IDENT shift to state 2
+-- On type_expr shift to state 37
+-- On return_types shift to state 39
+-- On ident shift to state 17
+-- On RIGHTPAR reduce production option(COMMA) -> COMMA 
+
+State 39:
+return_types -> type_expr COMMA return_types . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production return_types -> type_expr COMMA return_types 
+
+State 40:
+return_types -> type_expr option(COMMA) . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production return_types -> type_expr option(COMMA) 
+
+State 41:
+return_type -> LEFTPAR return_types . RIGHTPAR [ LEFTBRACE ]
+-- On RIGHTPAR shift to state 42
+
+State 42:
+return_type -> LEFTPAR return_types RIGHTPAR . [ LEFTBRACE ]
+-- On LEFTBRACE reduce production return_type -> LEFTPAR return_types RIGHTPAR 
+
+State 43:
+return_type -> type_expr . [ LEFTBRACE ]
+-- On LEFTBRACE reduce production return_type -> type_expr 
+
+State 44:
+loption(return_type) -> return_type . [ LEFTBRACE ]
+-- On LEFTBRACE reduce production loption(return_type) -> return_type 
+
+State 45:
+decl -> FUNC ident LEFTPAR loption(parameters) RIGHTPAR loption(return_type) . block SEMICOLON [ TYPE FUNC EOF ]
+-- On LEFTBRACE shift to state 46
+-- On block shift to state 141
+
+State 46:
+block -> LEFTBRACE . RIGHTBRACE [ SEMICOLON RIGHTBRACE ELSE ]
+block -> LEFTBRACE . statements RIGHTBRACE [ SEMICOLON RIGHTBRACE ELSE ]
+-- On VAR shift to state 47
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On SEMICOLON shift to state 99
+-- On RIGHTBRACE shift to state 138
+-- On RETURN shift to state 100
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On LEFTBRACE shift to state 46
+-- On IF shift to state 102
+-- On IDENT shift to state 2
+-- On FOR shift to state 109
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On stmt_desc shift to state 130
+-- On stmt shift to state 131
+-- On statements shift to state 139
+-- On simple_stmt_desc shift to state 110
+-- On simple_stmt shift to state 134
+-- On separated_nonempty_list(COMMA,expr) shift to state 95
+-- On if_stmt_desc shift to state 106
+-- On if_stmt shift to state 135
+-- On ident shift to state 60
+-- On exprs shift to state 118
+-- On expr_desc shift to state 65
+-- On expr shift to state 123
+-- On block shift to state 136
+
+State 47:
+stmt_desc -> VAR . separated_nonempty_list(COMMA,ident) option(type_expr) loption(init) [ SEMICOLON RIGHTBRACE ]
+-- On IDENT shift to state 2
+-- On separated_nonempty_list(COMMA,ident) shift to state 48
+-- On ident shift to state 24
+
+State 48:
+stmt_desc -> VAR separated_nonempty_list(COMMA,ident) . option(type_expr) loption(init) [ SEMICOLON RIGHTBRACE ]
+-- On STAR shift to state 15
+-- On IDENT shift to state 2
+-- On type_expr shift to state 49
+-- On option(type_expr) shift to state 50
+-- On ident shift to state 17
+-- On SEMICOLON reduce production option(type_expr) -> 
+-- On RIGHTBRACE reduce production option(type_expr) -> 
+-- On EQ reduce production option(type_expr) -> 
+
+State 49:
+option(type_expr) -> type_expr . [ SEMICOLON RIGHTBRACE EQ ]
+-- On SEMICOLON reduce production option(type_expr) -> type_expr 
+-- On RIGHTBRACE reduce production option(type_expr) -> type_expr 
+-- On EQ reduce production option(type_expr) -> type_expr 
+
+State 50:
+stmt_desc -> VAR separated_nonempty_list(COMMA,ident) option(type_expr) . loption(init) [ SEMICOLON RIGHTBRACE ]
+-- On EQ shift to state 51
+-- On loption(init) shift to state 97
+-- On init shift to state 98
+-- On SEMICOLON reduce production loption(init) -> 
+-- On RIGHTBRACE reduce production loption(init) -> 
+
+State 51:
+init -> EQ . exprs [ SEMICOLON RIGHTBRACE ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On separated_nonempty_list(COMMA,expr) shift to state 95
+-- On ident shift to state 60
+-- On exprs shift to state 96
+-- On expr_desc shift to state 65
+-- On expr shift to state 66
+
+State 52:
+expr_desc -> STRING . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> STRING 
+-- On STAR reduce production expr_desc -> STRING 
+-- On SLASH reduce production expr_desc -> STRING 
+-- On SEMICOLON reduce production expr_desc -> STRING 
+-- On RIGHTPAR reduce production expr_desc -> STRING 
+-- On RIGHTBRACE reduce production expr_desc -> STRING 
+-- On PLUSPLUS reduce production expr_desc -> STRING 
+-- On PLUS reduce production expr_desc -> STRING 
+-- On PERCENT reduce production expr_desc -> STRING 
+-- On MINUSMINUS reduce production expr_desc -> STRING 
+-- On MINUS reduce production expr_desc -> STRING 
+-- On LEFTBRACE reduce production expr_desc -> STRING 
+-- On EQ reduce production expr_desc -> STRING 
+-- On DOT reduce production expr_desc -> STRING 
+-- On COMP reduce production expr_desc -> STRING 
+-- On COMMA reduce production expr_desc -> STRING 
+-- On COLONEQ reduce production expr_desc -> STRING 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> STRING 
+
+State 53:
+expr_desc -> STAR . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 94
+
+State 54:
+expr_desc -> NIL . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> NIL 
+-- On STAR reduce production expr_desc -> NIL 
+-- On SLASH reduce production expr_desc -> NIL 
+-- On SEMICOLON reduce production expr_desc -> NIL 
+-- On RIGHTPAR reduce production expr_desc -> NIL 
+-- On RIGHTBRACE reduce production expr_desc -> NIL 
+-- On PLUSPLUS reduce production expr_desc -> NIL 
+-- On PLUS reduce production expr_desc -> NIL 
+-- On PERCENT reduce production expr_desc -> NIL 
+-- On MINUSMINUS reduce production expr_desc -> NIL 
+-- On MINUS reduce production expr_desc -> NIL 
+-- On LEFTBRACE reduce production expr_desc -> NIL 
+-- On EQ reduce production expr_desc -> NIL 
+-- On DOT reduce production expr_desc -> NIL 
+-- On COMP reduce production expr_desc -> NIL 
+-- On COMMA reduce production expr_desc -> NIL 
+-- On COLONEQ reduce production expr_desc -> NIL 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> NIL 
+
+State 55:
+expr_desc -> MINUS . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 93
+
+State 56:
+expr_desc -> LEFTPAR . expr RIGHTPAR [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 91
+
+State 57:
+expr_desc -> CST . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> CST 
+-- On STAR reduce production expr_desc -> CST 
+-- On SLASH reduce production expr_desc -> CST 
+-- On SEMICOLON reduce production expr_desc -> CST 
+-- On RIGHTPAR reduce production expr_desc -> CST 
+-- On RIGHTBRACE reduce production expr_desc -> CST 
+-- On PLUSPLUS reduce production expr_desc -> CST 
+-- On PLUS reduce production expr_desc -> CST 
+-- On PERCENT reduce production expr_desc -> CST 
+-- On MINUSMINUS reduce production expr_desc -> CST 
+-- On MINUS reduce production expr_desc -> CST 
+-- On LEFTBRACE reduce production expr_desc -> CST 
+-- On EQ reduce production expr_desc -> CST 
+-- On DOT reduce production expr_desc -> CST 
+-- On COMP reduce production expr_desc -> CST 
+-- On COMMA reduce production expr_desc -> CST 
+-- On COLONEQ reduce production expr_desc -> CST 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> CST 
+
+State 58:
+expr_desc -> BANG . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 90
+
+State 59:
+expr_desc -> AMP . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 89
+
+State 60:
+expr_desc -> ident . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> ident . arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On LEFTPAR shift to state 61
+-- On arguments shift to state 88
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> ident 
+-- On STAR reduce production expr_desc -> ident 
+-- On SLASH reduce production expr_desc -> ident 
+-- On SEMICOLON reduce production expr_desc -> ident 
+-- On RIGHTPAR reduce production expr_desc -> ident 
+-- On RIGHTBRACE reduce production expr_desc -> ident 
+-- On PLUSPLUS reduce production expr_desc -> ident 
+-- On PLUS reduce production expr_desc -> ident 
+-- On PERCENT reduce production expr_desc -> ident 
+-- On MINUSMINUS reduce production expr_desc -> ident 
+-- On MINUS reduce production expr_desc -> ident 
+-- On LEFTBRACE reduce production expr_desc -> ident 
+-- On EQ reduce production expr_desc -> ident 
+-- On DOT reduce production expr_desc -> ident 
+-- On COMP reduce production expr_desc -> ident 
+-- On COMMA reduce production expr_desc -> ident 
+-- On COLONEQ reduce production expr_desc -> ident 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> ident 
+
+State 61:
+arguments -> LEFTPAR . loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On separated_nonempty_list(COMMA,expr) shift to state 62
+-- On loption(separated_nonempty_list(COMMA,expr)) shift to state 63
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 66
+-- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,expr)) -> 
+
+State 62:
+loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr) . [ SEMICOLON RIGHTPAR RIGHTBRACE ]
+-- On SEMICOLON reduce production loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr) 
+-- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr) 
+-- On RIGHTBRACE reduce production loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr) 
+
+State 63:
+arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) . RIGHTPAR [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On RIGHTPAR shift to state 64
+
+State 64:
+arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On STAR reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On SLASH reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On SEMICOLON reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On RIGHTPAR reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On RIGHTBRACE reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On PLUSPLUS reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On PLUS reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On PERCENT reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On MINUSMINUS reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On MINUS reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On LEFTBRACE reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On EQ reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On DOT reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On COMP reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On COMMA reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On COLONEQ reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+-- On AMPERSANDAMPERSAND reduce production arguments -> LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR 
+
+State 65:
+expr -> expr_desc . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production expr -> expr_desc 
+-- On STAR reduce production expr -> expr_desc 
+-- On SLASH reduce production expr -> expr_desc 
+-- On SEMICOLON reduce production expr -> expr_desc 
+-- On RIGHTPAR reduce production expr -> expr_desc 
+-- On RIGHTBRACE reduce production expr -> expr_desc 
+-- On PLUSPLUS reduce production expr -> expr_desc 
+-- On PLUS reduce production expr -> expr_desc 
+-- On PERCENT reduce production expr -> expr_desc 
+-- On MINUSMINUS reduce production expr -> expr_desc 
+-- On MINUS reduce production expr -> expr_desc 
+-- On LEFTBRACE reduce production expr -> expr_desc 
+-- On EQ reduce production expr -> expr_desc 
+-- On DOT reduce production expr -> expr_desc 
+-- On COMP reduce production expr -> expr_desc 
+-- On COMMA reduce production expr -> expr_desc 
+-- On COLONEQ reduce production expr -> expr_desc 
+-- On AMPERSANDAMPERSAND reduce production expr -> expr_desc 
+
+State 66:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUS PERCENT MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+separated_nonempty_list(COMMA,expr) -> expr . [ SEMICOLON RIGHTPAR RIGHTBRACE LEFTBRACE EQ COLONEQ ]
+separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMMA,expr) [ SEMICOLON RIGHTPAR RIGHTBRACE LEFTBRACE EQ COLONEQ ]
+-- On VERTICALBARVERTICALBAR shift to state 67
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUS shift to state 80
+-- On DOT shift to state 71
+-- On COMP shift to state 82
+-- On COMMA shift to state 86
+-- On AMPERSANDAMPERSAND shift to state 84
+-- On SEMICOLON reduce production separated_nonempty_list(COMMA,expr) -> expr 
+-- On RIGHTPAR reduce production separated_nonempty_list(COMMA,expr) -> expr 
+-- On RIGHTBRACE reduce production separated_nonempty_list(COMMA,expr) -> expr 
+-- On LEFTBRACE reduce production separated_nonempty_list(COMMA,expr) -> expr 
+-- On EQ reduce production separated_nonempty_list(COMMA,expr) -> expr 
+-- On COLONEQ reduce production separated_nonempty_list(COMMA,expr) -> expr 
+
+State 67:
+expr_desc -> expr VERTICALBARVERTICALBAR . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 68
+
+State 68:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr VERTICALBARVERTICALBAR expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUS shift to state 80
+-- On DOT shift to state 71
+-- On COMP shift to state 82
+-- On AMPERSANDAMPERSAND shift to state 84
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On SEMICOLON reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On RIGHTPAR reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On RIGHTBRACE reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On PLUSPLUS reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On MINUSMINUS reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On LEFTBRACE reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On EQ reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On COMMA reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+-- On COLONEQ reduce production expr_desc -> expr VERTICALBARVERTICALBAR expr 
+
+State 69:
+expr_desc -> expr STAR . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 70
+
+State 70:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr STAR expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr STAR expr 
+-- On STAR reduce production expr_desc -> expr STAR expr 
+-- On SLASH reduce production expr_desc -> expr STAR expr 
+-- On SEMICOLON reduce production expr_desc -> expr STAR expr 
+-- On RIGHTPAR reduce production expr_desc -> expr STAR expr 
+-- On RIGHTBRACE reduce production expr_desc -> expr STAR expr 
+-- On PLUSPLUS reduce production expr_desc -> expr STAR expr 
+-- On PLUS reduce production expr_desc -> expr STAR expr 
+-- On PERCENT reduce production expr_desc -> expr STAR expr 
+-- On MINUSMINUS reduce production expr_desc -> expr STAR expr 
+-- On MINUS reduce production expr_desc -> expr STAR expr 
+-- On LEFTBRACE reduce production expr_desc -> expr STAR expr 
+-- On EQ reduce production expr_desc -> expr STAR expr 
+-- On COMP reduce production expr_desc -> expr STAR expr 
+-- On COMMA reduce production expr_desc -> expr STAR expr 
+-- On COLONEQ reduce production expr_desc -> expr STAR expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr STAR expr 
+
+State 71:
+expr_desc -> expr DOT . ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr DOT . ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On IDENT shift to state 2
+-- On ident shift to state 72
+
+State 72:
+expr_desc -> expr DOT ident . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr DOT ident . arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On LEFTPAR shift to state 61
+-- On arguments shift to state 73
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr DOT ident 
+-- On STAR reduce production expr_desc -> expr DOT ident 
+-- On SLASH reduce production expr_desc -> expr DOT ident 
+-- On SEMICOLON reduce production expr_desc -> expr DOT ident 
+-- On RIGHTPAR reduce production expr_desc -> expr DOT ident 
+-- On RIGHTBRACE reduce production expr_desc -> expr DOT ident 
+-- On PLUSPLUS reduce production expr_desc -> expr DOT ident 
+-- On PLUS reduce production expr_desc -> expr DOT ident 
+-- On PERCENT reduce production expr_desc -> expr DOT ident 
+-- On MINUSMINUS reduce production expr_desc -> expr DOT ident 
+-- On MINUS reduce production expr_desc -> expr DOT ident 
+-- On LEFTBRACE reduce production expr_desc -> expr DOT ident 
+-- On EQ reduce production expr_desc -> expr DOT ident 
+-- On DOT reduce production expr_desc -> expr DOT ident 
+-- On COMP reduce production expr_desc -> expr DOT ident 
+-- On COMMA reduce production expr_desc -> expr DOT ident 
+-- On COLONEQ reduce production expr_desc -> expr DOT ident 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr DOT ident 
+
+State 73:
+expr_desc -> expr DOT ident arguments . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr DOT ident arguments 
+-- On STAR reduce production expr_desc -> expr DOT ident arguments 
+-- On SLASH reduce production expr_desc -> expr DOT ident arguments 
+-- On SEMICOLON reduce production expr_desc -> expr DOT ident arguments 
+-- On RIGHTPAR reduce production expr_desc -> expr DOT ident arguments 
+-- On RIGHTBRACE reduce production expr_desc -> expr DOT ident arguments 
+-- On PLUSPLUS reduce production expr_desc -> expr DOT ident arguments 
+-- On PLUS reduce production expr_desc -> expr DOT ident arguments 
+-- On PERCENT reduce production expr_desc -> expr DOT ident arguments 
+-- On MINUSMINUS reduce production expr_desc -> expr DOT ident arguments 
+-- On MINUS reduce production expr_desc -> expr DOT ident arguments 
+-- On LEFTBRACE reduce production expr_desc -> expr DOT ident arguments 
+-- On EQ reduce production expr_desc -> expr DOT ident arguments 
+-- On DOT reduce production expr_desc -> expr DOT ident arguments 
+-- On COMP reduce production expr_desc -> expr DOT ident arguments 
+-- On COMMA reduce production expr_desc -> expr DOT ident arguments 
+-- On COLONEQ reduce production expr_desc -> expr DOT ident arguments 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr DOT ident arguments 
+
+State 74:
+expr_desc -> expr SLASH . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 75
+
+State 75:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr SLASH expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr SLASH expr 
+-- On STAR reduce production expr_desc -> expr SLASH expr 
+-- On SLASH reduce production expr_desc -> expr SLASH expr 
+-- On SEMICOLON reduce production expr_desc -> expr SLASH expr 
+-- On RIGHTPAR reduce production expr_desc -> expr SLASH expr 
+-- On RIGHTBRACE reduce production expr_desc -> expr SLASH expr 
+-- On PLUSPLUS reduce production expr_desc -> expr SLASH expr 
+-- On PLUS reduce production expr_desc -> expr SLASH expr 
+-- On PERCENT reduce production expr_desc -> expr SLASH expr 
+-- On MINUSMINUS reduce production expr_desc -> expr SLASH expr 
+-- On MINUS reduce production expr_desc -> expr SLASH expr 
+-- On LEFTBRACE reduce production expr_desc -> expr SLASH expr 
+-- On EQ reduce production expr_desc -> expr SLASH expr 
+-- On COMP reduce production expr_desc -> expr SLASH expr 
+-- On COMMA reduce production expr_desc -> expr SLASH expr 
+-- On COLONEQ reduce production expr_desc -> expr SLASH expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr SLASH expr 
+
+State 76:
+expr_desc -> expr PLUS . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 77
+
+State 77:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr PLUS expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PERCENT shift to state 78
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr PLUS expr 
+-- On SEMICOLON reduce production expr_desc -> expr PLUS expr 
+-- On RIGHTPAR reduce production expr_desc -> expr PLUS expr 
+-- On RIGHTBRACE reduce production expr_desc -> expr PLUS expr 
+-- On PLUSPLUS reduce production expr_desc -> expr PLUS expr 
+-- On PLUS reduce production expr_desc -> expr PLUS expr 
+-- On MINUSMINUS reduce production expr_desc -> expr PLUS expr 
+-- On MINUS reduce production expr_desc -> expr PLUS expr 
+-- On LEFTBRACE reduce production expr_desc -> expr PLUS expr 
+-- On EQ reduce production expr_desc -> expr PLUS expr 
+-- On COMP reduce production expr_desc -> expr PLUS expr 
+-- On COMMA reduce production expr_desc -> expr PLUS expr 
+-- On COLONEQ reduce production expr_desc -> expr PLUS expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr PLUS expr 
+
+State 78:
+expr_desc -> expr PERCENT . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 79
+
+State 79:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr PERCENT expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr PERCENT expr 
+-- On STAR reduce production expr_desc -> expr PERCENT expr 
+-- On SLASH reduce production expr_desc -> expr PERCENT expr 
+-- On SEMICOLON reduce production expr_desc -> expr PERCENT expr 
+-- On RIGHTPAR reduce production expr_desc -> expr PERCENT expr 
+-- On RIGHTBRACE reduce production expr_desc -> expr PERCENT expr 
+-- On PLUSPLUS reduce production expr_desc -> expr PERCENT expr 
+-- On PLUS reduce production expr_desc -> expr PERCENT expr 
+-- On PERCENT reduce production expr_desc -> expr PERCENT expr 
+-- On MINUSMINUS reduce production expr_desc -> expr PERCENT expr 
+-- On MINUS reduce production expr_desc -> expr PERCENT expr 
+-- On LEFTBRACE reduce production expr_desc -> expr PERCENT expr 
+-- On EQ reduce production expr_desc -> expr PERCENT expr 
+-- On COMP reduce production expr_desc -> expr PERCENT expr 
+-- On COMMA reduce production expr_desc -> expr PERCENT expr 
+-- On COLONEQ reduce production expr_desc -> expr PERCENT expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr PERCENT expr 
+
+State 80:
+expr_desc -> expr MINUS . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 81
+
+State 81:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr MINUS expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PERCENT shift to state 78
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr MINUS expr 
+-- On SEMICOLON reduce production expr_desc -> expr MINUS expr 
+-- On RIGHTPAR reduce production expr_desc -> expr MINUS expr 
+-- On RIGHTBRACE reduce production expr_desc -> expr MINUS expr 
+-- On PLUSPLUS reduce production expr_desc -> expr MINUS expr 
+-- On PLUS reduce production expr_desc -> expr MINUS expr 
+-- On MINUSMINUS reduce production expr_desc -> expr MINUS expr 
+-- On MINUS reduce production expr_desc -> expr MINUS expr 
+-- On LEFTBRACE reduce production expr_desc -> expr MINUS expr 
+-- On EQ reduce production expr_desc -> expr MINUS expr 
+-- On COMP reduce production expr_desc -> expr MINUS expr 
+-- On COMMA reduce production expr_desc -> expr MINUS expr 
+-- On COLONEQ reduce production expr_desc -> expr MINUS expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr MINUS expr 
+
+State 82:
+expr_desc -> expr COMP . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 83
+
+State 83:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr COMP expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUS shift to state 80
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr COMP expr 
+-- On SEMICOLON reduce production expr_desc -> expr COMP expr 
+-- On RIGHTPAR reduce production expr_desc -> expr COMP expr 
+-- On RIGHTBRACE reduce production expr_desc -> expr COMP expr 
+-- On PLUSPLUS reduce production expr_desc -> expr COMP expr 
+-- On MINUSMINUS reduce production expr_desc -> expr COMP expr 
+-- On LEFTBRACE reduce production expr_desc -> expr COMP expr 
+-- On EQ reduce production expr_desc -> expr COMP expr 
+-- On COMP reduce production expr_desc -> expr COMP expr 
+-- On COMMA reduce production expr_desc -> expr COMP expr 
+-- On COLONEQ reduce production expr_desc -> expr COMP expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr COMP expr 
+
+State 84:
+expr_desc -> expr AMPERSANDAMPERSAND . expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 85
+
+State 85:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr AMPERSANDAMPERSAND expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUS shift to state 80
+-- On DOT shift to state 71
+-- On COMP shift to state 82
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On SEMICOLON reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On RIGHTPAR reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On RIGHTBRACE reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On PLUSPLUS reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On MINUSMINUS reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On LEFTBRACE reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On EQ reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On COMMA reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On COLONEQ reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> expr AMPERSANDAMPERSAND expr 
+
+State 86:
+separated_nonempty_list(COMMA,expr) -> expr COMMA . separated_nonempty_list(COMMA,expr) [ SEMICOLON RIGHTPAR RIGHTBRACE LEFTBRACE EQ COLONEQ ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On separated_nonempty_list(COMMA,expr) shift to state 87
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 66
+
+State 87:
+separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) . [ SEMICOLON RIGHTPAR RIGHTBRACE LEFTBRACE EQ COLONEQ ]
+-- On SEMICOLON reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) 
+-- On RIGHTPAR reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) 
+-- On RIGHTBRACE reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) 
+-- On LEFTBRACE reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) 
+-- On EQ reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) 
+-- On COLONEQ reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) 
+
+State 88:
+expr_desc -> ident arguments . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> ident arguments 
+-- On STAR reduce production expr_desc -> ident arguments 
+-- On SLASH reduce production expr_desc -> ident arguments 
+-- On SEMICOLON reduce production expr_desc -> ident arguments 
+-- On RIGHTPAR reduce production expr_desc -> ident arguments 
+-- On RIGHTBRACE reduce production expr_desc -> ident arguments 
+-- On PLUSPLUS reduce production expr_desc -> ident arguments 
+-- On PLUS reduce production expr_desc -> ident arguments 
+-- On PERCENT reduce production expr_desc -> ident arguments 
+-- On MINUSMINUS reduce production expr_desc -> ident arguments 
+-- On MINUS reduce production expr_desc -> ident arguments 
+-- On LEFTBRACE reduce production expr_desc -> ident arguments 
+-- On EQ reduce production expr_desc -> ident arguments 
+-- On DOT reduce production expr_desc -> ident arguments 
+-- On COMP reduce production expr_desc -> ident arguments 
+-- On COMMA reduce production expr_desc -> ident arguments 
+-- On COLONEQ reduce production expr_desc -> ident arguments 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> ident arguments 
+
+State 89:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> AMP expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> AMP expr 
+-- On STAR reduce production expr_desc -> AMP expr 
+-- On SLASH reduce production expr_desc -> AMP expr 
+-- On SEMICOLON reduce production expr_desc -> AMP expr 
+-- On RIGHTPAR reduce production expr_desc -> AMP expr 
+-- On RIGHTBRACE reduce production expr_desc -> AMP expr 
+-- On PLUSPLUS reduce production expr_desc -> AMP expr 
+-- On PLUS reduce production expr_desc -> AMP expr 
+-- On PERCENT reduce production expr_desc -> AMP expr 
+-- On MINUSMINUS reduce production expr_desc -> AMP expr 
+-- On MINUS reduce production expr_desc -> AMP expr 
+-- On LEFTBRACE reduce production expr_desc -> AMP expr 
+-- On EQ reduce production expr_desc -> AMP expr 
+-- On COMP reduce production expr_desc -> AMP expr 
+-- On COMMA reduce production expr_desc -> AMP expr 
+-- On COLONEQ reduce production expr_desc -> AMP expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> AMP expr 
+
+State 90:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> BANG expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> BANG expr 
+-- On STAR reduce production expr_desc -> BANG expr 
+-- On SLASH reduce production expr_desc -> BANG expr 
+-- On SEMICOLON reduce production expr_desc -> BANG expr 
+-- On RIGHTPAR reduce production expr_desc -> BANG expr 
+-- On RIGHTBRACE reduce production expr_desc -> BANG expr 
+-- On PLUSPLUS reduce production expr_desc -> BANG expr 
+-- On PLUS reduce production expr_desc -> BANG expr 
+-- On PERCENT reduce production expr_desc -> BANG expr 
+-- On MINUSMINUS reduce production expr_desc -> BANG expr 
+-- On MINUS reduce production expr_desc -> BANG expr 
+-- On LEFTBRACE reduce production expr_desc -> BANG expr 
+-- On EQ reduce production expr_desc -> BANG expr 
+-- On COMP reduce production expr_desc -> BANG expr 
+-- On COMMA reduce production expr_desc -> BANG expr 
+-- On COLONEQ reduce production expr_desc -> BANG expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> BANG expr 
+
+State 91:
+expr_desc -> LEFTPAR expr . RIGHTPAR [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH RIGHTPAR PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR shift to state 67
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On RIGHTPAR shift to state 92
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUS shift to state 80
+-- On DOT shift to state 71
+-- On COMP shift to state 82
+-- On AMPERSANDAMPERSAND shift to state 84
+
+State 92:
+expr_desc -> LEFTPAR expr RIGHTPAR . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On STAR reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On SLASH reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On SEMICOLON reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On RIGHTPAR reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On RIGHTBRACE reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On PLUSPLUS reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On PLUS reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On PERCENT reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On MINUSMINUS reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On MINUS reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On LEFTBRACE reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On EQ reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On DOT reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On COMP reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On COMMA reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On COLONEQ reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> LEFTPAR expr RIGHTPAR 
+
+State 93:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> MINUS expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> MINUS expr 
+-- On STAR reduce production expr_desc -> MINUS expr 
+-- On SLASH reduce production expr_desc -> MINUS expr 
+-- On SEMICOLON reduce production expr_desc -> MINUS expr 
+-- On RIGHTPAR reduce production expr_desc -> MINUS expr 
+-- On RIGHTBRACE reduce production expr_desc -> MINUS expr 
+-- On PLUSPLUS reduce production expr_desc -> MINUS expr 
+-- On PLUS reduce production expr_desc -> MINUS expr 
+-- On PERCENT reduce production expr_desc -> MINUS expr 
+-- On MINUSMINUS reduce production expr_desc -> MINUS expr 
+-- On MINUS reduce production expr_desc -> MINUS expr 
+-- On LEFTBRACE reduce production expr_desc -> MINUS expr 
+-- On EQ reduce production expr_desc -> MINUS expr 
+-- On COMP reduce production expr_desc -> MINUS expr 
+-- On COMMA reduce production expr_desc -> MINUS expr 
+-- On COLONEQ reduce production expr_desc -> MINUS expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> MINUS expr 
+
+State 94:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> STAR expr . [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTPAR RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+-- On DOT shift to state 71
+-- On VERTICALBARVERTICALBAR reduce production expr_desc -> STAR expr 
+-- On STAR reduce production expr_desc -> STAR expr 
+-- On SLASH reduce production expr_desc -> STAR expr 
+-- On SEMICOLON reduce production expr_desc -> STAR expr 
+-- On RIGHTPAR reduce production expr_desc -> STAR expr 
+-- On RIGHTBRACE reduce production expr_desc -> STAR expr 
+-- On PLUSPLUS reduce production expr_desc -> STAR expr 
+-- On PLUS reduce production expr_desc -> STAR expr 
+-- On PERCENT reduce production expr_desc -> STAR expr 
+-- On MINUSMINUS reduce production expr_desc -> STAR expr 
+-- On MINUS reduce production expr_desc -> STAR expr 
+-- On LEFTBRACE reduce production expr_desc -> STAR expr 
+-- On EQ reduce production expr_desc -> STAR expr 
+-- On COMP reduce production expr_desc -> STAR expr 
+-- On COMMA reduce production expr_desc -> STAR expr 
+-- On COLONEQ reduce production expr_desc -> STAR expr 
+-- On AMPERSANDAMPERSAND reduce production expr_desc -> STAR expr 
+
+State 95:
+exprs -> separated_nonempty_list(COMMA,expr) . [ SEMICOLON RIGHTBRACE LEFTBRACE EQ COLONEQ ]
+-- On SEMICOLON reduce production exprs -> separated_nonempty_list(COMMA,expr) 
+-- On RIGHTBRACE reduce production exprs -> separated_nonempty_list(COMMA,expr) 
+-- On LEFTBRACE reduce production exprs -> separated_nonempty_list(COMMA,expr) 
+-- On EQ reduce production exprs -> separated_nonempty_list(COMMA,expr) 
+-- On COLONEQ reduce production exprs -> separated_nonempty_list(COMMA,expr) 
+
+State 96:
+init -> EQ exprs . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production init -> EQ exprs 
+-- On RIGHTBRACE reduce production init -> EQ exprs 
+
+State 97:
+stmt_desc -> VAR separated_nonempty_list(COMMA,ident) option(type_expr) loption(init) . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt_desc -> VAR separated_nonempty_list(COMMA,ident) option(type_expr) loption(init) 
+-- On RIGHTBRACE reduce production stmt_desc -> VAR separated_nonempty_list(COMMA,ident) option(type_expr) loption(init) 
+
+State 98:
+loption(init) -> init . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production loption(init) -> init 
+-- On RIGHTBRACE reduce production loption(init) -> init 
+
+State 99:
+statements -> SEMICOLON . statements [ RIGHTBRACE ]
+statements -> SEMICOLON . [ RIGHTBRACE ]
+-- On VAR shift to state 47
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On SEMICOLON shift to state 99
+-- On RETURN shift to state 100
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On LEFTBRACE shift to state 46
+-- On IF shift to state 102
+-- On IDENT shift to state 2
+-- On FOR shift to state 109
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On stmt_desc shift to state 130
+-- On stmt shift to state 131
+-- On statements shift to state 137
+-- On simple_stmt_desc shift to state 110
+-- On simple_stmt shift to state 134
+-- On separated_nonempty_list(COMMA,expr) shift to state 95
+-- On if_stmt_desc shift to state 106
+-- On if_stmt shift to state 135
+-- On ident shift to state 60
+-- On exprs shift to state 118
+-- On expr_desc shift to state 65
+-- On expr shift to state 123
+-- On block shift to state 136
+-- On RIGHTBRACE reduce production statements -> SEMICOLON 
+
+State 100:
+stmt_desc -> RETURN . loption(separated_nonempty_list(COMMA,expr)) [ SEMICOLON RIGHTBRACE ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On separated_nonempty_list(COMMA,expr) shift to state 62
+-- On loption(separated_nonempty_list(COMMA,expr)) shift to state 101
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 66
+-- On SEMICOLON reduce production loption(separated_nonempty_list(COMMA,expr)) -> 
+-- On RIGHTBRACE reduce production loption(separated_nonempty_list(COMMA,expr)) -> 
+
+State 101:
+stmt_desc -> RETURN loption(separated_nonempty_list(COMMA,expr)) . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt_desc -> RETURN loption(separated_nonempty_list(COMMA,expr)) 
+-- On RIGHTBRACE reduce production stmt_desc -> RETURN loption(separated_nonempty_list(COMMA,expr)) 
+
+State 102:
+if_stmt_desc -> IF . expr block [ SEMICOLON RIGHTBRACE ]
+if_stmt_desc -> IF . expr block ELSE if_stmt [ SEMICOLON RIGHTBRACE ]
+if_stmt_desc -> IF . expr block ELSE block [ SEMICOLON RIGHTBRACE ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 103
+
+State 103:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH PLUS PERCENT MINUS LEFTBRACE DOT COMP AMPERSANDAMPERSAND ]
+if_stmt_desc -> IF expr . block [ SEMICOLON RIGHTBRACE ]
+if_stmt_desc -> IF expr . block ELSE if_stmt [ SEMICOLON RIGHTBRACE ]
+if_stmt_desc -> IF expr . block ELSE block [ SEMICOLON RIGHTBRACE ]
+-- On VERTICALBARVERTICALBAR shift to state 67
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUS shift to state 80
+-- On LEFTBRACE shift to state 46
+-- On DOT shift to state 71
+-- On COMP shift to state 82
+-- On AMPERSANDAMPERSAND shift to state 84
+-- On block shift to state 104
+
+State 104:
+if_stmt_desc -> IF expr block . [ SEMICOLON RIGHTBRACE ]
+if_stmt_desc -> IF expr block . ELSE if_stmt [ SEMICOLON RIGHTBRACE ]
+if_stmt_desc -> IF expr block . ELSE block [ SEMICOLON RIGHTBRACE ]
+-- On ELSE shift to state 105
+-- On SEMICOLON reduce production if_stmt_desc -> IF expr block 
+-- On RIGHTBRACE reduce production if_stmt_desc -> IF expr block 
+
+State 105:
+if_stmt_desc -> IF expr block ELSE . if_stmt [ SEMICOLON RIGHTBRACE ]
+if_stmt_desc -> IF expr block ELSE . block [ SEMICOLON RIGHTBRACE ]
+-- On LEFTBRACE shift to state 46
+-- On IF shift to state 102
+-- On if_stmt_desc shift to state 106
+-- On if_stmt shift to state 107
+-- On block shift to state 108
+
+State 106:
+if_stmt -> if_stmt_desc . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production if_stmt -> if_stmt_desc 
+-- On RIGHTBRACE reduce production if_stmt -> if_stmt_desc 
+
+State 107:
+if_stmt_desc -> IF expr block ELSE if_stmt . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production if_stmt_desc -> IF expr block ELSE if_stmt 
+-- On RIGHTBRACE reduce production if_stmt_desc -> IF expr block ELSE if_stmt 
+
+State 108:
+if_stmt_desc -> IF expr block ELSE block . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production if_stmt_desc -> IF expr block ELSE block 
+-- On RIGHTBRACE reduce production if_stmt_desc -> IF expr block ELSE block 
+
+State 109:
+stmt_desc -> FOR . block [ SEMICOLON RIGHTBRACE ]
+stmt_desc -> FOR . expr block [ SEMICOLON RIGHTBRACE ]
+stmt_desc -> FOR . opt_simple_stmt SEMICOLON expr SEMICOLON opt_simple_stmt block [ SEMICOLON RIGHTBRACE ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On LEFTBRACE shift to state 46
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On simple_stmt_desc shift to state 110
+-- On simple_stmt shift to state 111
+-- On separated_nonempty_list(COMMA,expr) shift to state 95
+-- On opt_simple_stmt shift to state 112
+-- On ident shift to state 60
+-- On exprs shift to state 118
+-- On expr_desc shift to state 65
+-- On expr shift to state 127
+-- On block shift to state 129
+-- On SEMICOLON reduce production opt_simple_stmt -> 
+
+State 110:
+simple_stmt -> simple_stmt_desc . [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On SEMICOLON reduce production simple_stmt -> simple_stmt_desc 
+-- On RIGHTBRACE reduce production simple_stmt -> simple_stmt_desc 
+-- On LEFTBRACE reduce production simple_stmt -> simple_stmt_desc 
+
+State 111:
+opt_simple_stmt -> simple_stmt . [ SEMICOLON LEFTBRACE ]
+-- On SEMICOLON reduce production opt_simple_stmt -> simple_stmt 
+-- On LEFTBRACE reduce production opt_simple_stmt -> simple_stmt 
+
+State 112:
+stmt_desc -> FOR opt_simple_stmt . SEMICOLON expr SEMICOLON opt_simple_stmt block [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON shift to state 113
+
+State 113:
+stmt_desc -> FOR opt_simple_stmt SEMICOLON . expr SEMICOLON opt_simple_stmt block [ SEMICOLON RIGHTBRACE ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On ident shift to state 60
+-- On expr_desc shift to state 65
+-- On expr shift to state 114
+
+State 114:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUS PERCENT MINUS DOT COMP AMPERSANDAMPERSAND ]
+stmt_desc -> FOR opt_simple_stmt SEMICOLON expr . SEMICOLON opt_simple_stmt block [ SEMICOLON RIGHTBRACE ]
+-- On VERTICALBARVERTICALBAR shift to state 67
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On SEMICOLON shift to state 115
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUS shift to state 80
+-- On DOT shift to state 71
+-- On COMP shift to state 82
+-- On AMPERSANDAMPERSAND shift to state 84
+
+State 115:
+stmt_desc -> FOR opt_simple_stmt SEMICOLON expr SEMICOLON . opt_simple_stmt block [ SEMICOLON RIGHTBRACE ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On simple_stmt_desc shift to state 110
+-- On simple_stmt shift to state 111
+-- On separated_nonempty_list(COMMA,expr) shift to state 95
+-- On opt_simple_stmt shift to state 116
+-- On ident shift to state 60
+-- On exprs shift to state 118
+-- On expr_desc shift to state 65
+-- On expr shift to state 123
+-- On LEFTBRACE reduce production opt_simple_stmt -> 
+
+State 116:
+stmt_desc -> FOR opt_simple_stmt SEMICOLON expr SEMICOLON opt_simple_stmt . block [ SEMICOLON RIGHTBRACE ]
+-- On LEFTBRACE shift to state 46
+-- On block shift to state 117
+
+State 117:
+stmt_desc -> FOR opt_simple_stmt SEMICOLON expr SEMICOLON opt_simple_stmt block . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt_desc -> FOR opt_simple_stmt SEMICOLON expr SEMICOLON opt_simple_stmt block 
+-- On RIGHTBRACE reduce production stmt_desc -> FOR opt_simple_stmt SEMICOLON expr SEMICOLON opt_simple_stmt block 
+
+State 118:
+simple_stmt_desc -> exprs . EQ exprs [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+simple_stmt_desc -> exprs . COLONEQ exprs [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On EQ shift to state 119
+-- On COLONEQ shift to state 121
+
+State 119:
+simple_stmt_desc -> exprs EQ . exprs [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On separated_nonempty_list(COMMA,expr) shift to state 95
+-- On ident shift to state 60
+-- On exprs shift to state 120
+-- On expr_desc shift to state 65
+-- On expr shift to state 66
+
+State 120:
+simple_stmt_desc -> exprs EQ exprs . [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On SEMICOLON reduce production simple_stmt_desc -> exprs EQ exprs 
+-- On RIGHTBRACE reduce production simple_stmt_desc -> exprs EQ exprs 
+-- On LEFTBRACE reduce production simple_stmt_desc -> exprs EQ exprs 
+
+State 121:
+simple_stmt_desc -> exprs COLONEQ . exprs [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On IDENT shift to state 2
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On separated_nonempty_list(COMMA,expr) shift to state 95
+-- On ident shift to state 60
+-- On exprs shift to state 122
+-- On expr_desc shift to state 65
+-- On expr shift to state 66
+
+State 122:
+simple_stmt_desc -> exprs COLONEQ exprs . [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On SEMICOLON reduce production simple_stmt_desc -> exprs COLONEQ exprs 
+-- On RIGHTBRACE reduce production simple_stmt_desc -> exprs COLONEQ exprs 
+-- On LEFTBRACE reduce production simple_stmt_desc -> exprs COLONEQ exprs 
+
+State 123:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON RIGHTBRACE PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+separated_nonempty_list(COMMA,expr) -> expr . [ EQ COLONEQ ]
+separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMMA,expr) [ EQ COLONEQ ]
+simple_stmt -> expr . [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+simple_stmt_desc -> expr . incdec [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On VERTICALBARVERTICALBAR shift to state 67
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PLUSPLUS shift to state 124
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUSMINUS shift to state 125
+-- On MINUS shift to state 80
+-- On DOT shift to state 71
+-- On COMP shift to state 82
+-- On COMMA shift to state 86
+-- On AMPERSANDAMPERSAND shift to state 84
+-- On incdec shift to state 126
+-- On SEMICOLON reduce production simple_stmt -> expr 
+-- On RIGHTBRACE reduce production simple_stmt -> expr 
+-- On LEFTBRACE reduce production simple_stmt -> expr 
+-- On EQ reduce production separated_nonempty_list(COMMA,expr) -> expr 
+-- On COLONEQ reduce production separated_nonempty_list(COMMA,expr) -> expr 
+
+State 124:
+incdec -> PLUSPLUS . [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On SEMICOLON reduce production incdec -> PLUSPLUS 
+-- On RIGHTBRACE reduce production incdec -> PLUSPLUS 
+-- On LEFTBRACE reduce production incdec -> PLUSPLUS 
+
+State 125:
+incdec -> MINUSMINUS . [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On SEMICOLON reduce production incdec -> MINUSMINUS 
+-- On RIGHTBRACE reduce production incdec -> MINUSMINUS 
+-- On LEFTBRACE reduce production incdec -> MINUSMINUS 
+
+State 126:
+simple_stmt_desc -> expr incdec . [ SEMICOLON RIGHTBRACE LEFTBRACE ]
+-- On SEMICOLON reduce production simple_stmt_desc -> expr incdec 
+-- On RIGHTBRACE reduce production simple_stmt_desc -> expr incdec 
+-- On LEFTBRACE reduce production simple_stmt_desc -> expr incdec 
+
+State 127:
+expr_desc -> expr . DOT ident [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . DOT ident arguments [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PLUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . MINUS expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . STAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . SLASH expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . PERCENT expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . COMP expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . AMPERSANDAMPERSAND expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+expr_desc -> expr . VERTICALBARVERTICALBAR expr [ VERTICALBARVERTICALBAR STAR SLASH SEMICOLON PLUSPLUS PLUS PERCENT MINUSMINUS MINUS LEFTBRACE EQ DOT COMP COMMA COLONEQ AMPERSANDAMPERSAND ]
+separated_nonempty_list(COMMA,expr) -> expr . [ EQ COLONEQ ]
+separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMMA,expr) [ EQ COLONEQ ]
+simple_stmt -> expr . [ SEMICOLON ]
+simple_stmt_desc -> expr . incdec [ SEMICOLON ]
+stmt_desc -> FOR expr . block [ SEMICOLON RIGHTBRACE ]
+-- On VERTICALBARVERTICALBAR shift to state 67
+-- On STAR shift to state 69
+-- On SLASH shift to state 74
+-- On PLUSPLUS shift to state 124
+-- On PLUS shift to state 76
+-- On PERCENT shift to state 78
+-- On MINUSMINUS shift to state 125
+-- On MINUS shift to state 80
+-- On LEFTBRACE shift to state 46
+-- On DOT shift to state 71
+-- On COMP shift to state 82
+-- On COMMA shift to state 86
+-- On AMPERSANDAMPERSAND shift to state 84
+-- On incdec shift to state 126
+-- On block shift to state 128
+-- On SEMICOLON reduce production simple_stmt -> expr 
+-- On EQ reduce production separated_nonempty_list(COMMA,expr) -> expr 
+-- On COLONEQ reduce production separated_nonempty_list(COMMA,expr) -> expr 
+
+State 128:
+stmt_desc -> FOR expr block . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt_desc -> FOR expr block 
+-- On RIGHTBRACE reduce production stmt_desc -> FOR expr block 
+
+State 129:
+stmt_desc -> FOR block . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt_desc -> FOR block 
+-- On RIGHTBRACE reduce production stmt_desc -> FOR block 
+
+State 130:
+stmt -> stmt_desc . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt -> stmt_desc 
+-- On RIGHTBRACE reduce production stmt -> stmt_desc 
+
+State 131:
+statements -> stmt . [ RIGHTBRACE ]
+statements -> stmt . SEMICOLON [ RIGHTBRACE ]
+statements -> stmt . SEMICOLON statements [ RIGHTBRACE ]
+-- On SEMICOLON shift to state 132
+-- On RIGHTBRACE reduce production statements -> stmt 
+
+State 132:
+statements -> stmt SEMICOLON . [ RIGHTBRACE ]
+statements -> stmt SEMICOLON . statements [ RIGHTBRACE ]
+-- On VAR shift to state 47
+-- On STRING shift to state 52
+-- On STAR shift to state 53
+-- On SEMICOLON shift to state 99
+-- On RETURN shift to state 100
+-- On NIL shift to state 54
+-- On MINUS shift to state 55
+-- On LEFTPAR shift to state 56
+-- On LEFTBRACE shift to state 46
+-- On IF shift to state 102
+-- On IDENT shift to state 2
+-- On FOR shift to state 109
+-- On CST shift to state 57
+-- On BANG shift to state 58
+-- On AMP shift to state 59
+-- On stmt_desc shift to state 130
+-- On stmt shift to state 131
+-- On statements shift to state 133
+-- On simple_stmt_desc shift to state 110
+-- On simple_stmt shift to state 134
+-- On separated_nonempty_list(COMMA,expr) shift to state 95
+-- On if_stmt_desc shift to state 106
+-- On if_stmt shift to state 135
+-- On ident shift to state 60
+-- On exprs shift to state 118
+-- On expr_desc shift to state 65
+-- On expr shift to state 123
+-- On block shift to state 136
+-- On RIGHTBRACE reduce production statements -> stmt SEMICOLON 
+
+State 133:
+statements -> stmt SEMICOLON statements . [ RIGHTBRACE ]
+-- On RIGHTBRACE reduce production statements -> stmt SEMICOLON statements 
+
+State 134:
+stmt -> simple_stmt . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt -> simple_stmt 
+-- On RIGHTBRACE reduce production stmt -> simple_stmt 
+
+State 135:
+stmt -> if_stmt . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt -> if_stmt 
+-- On RIGHTBRACE reduce production stmt -> if_stmt 
+
+State 136:
+stmt -> block . [ SEMICOLON RIGHTBRACE ]
+-- On SEMICOLON reduce production stmt -> block 
+-- On RIGHTBRACE reduce production stmt -> block 
+
+State 137:
+statements -> SEMICOLON statements . [ RIGHTBRACE ]
+-- On RIGHTBRACE reduce production statements -> SEMICOLON statements 
+
+State 138:
+block -> LEFTBRACE RIGHTBRACE . [ SEMICOLON RIGHTBRACE ELSE ]
+-- On SEMICOLON reduce production block -> LEFTBRACE RIGHTBRACE 
+-- On RIGHTBRACE reduce production block -> LEFTBRACE RIGHTBRACE 
+-- On ELSE reduce production block -> LEFTBRACE RIGHTBRACE 
+
+State 139:
+block -> LEFTBRACE statements . RIGHTBRACE [ SEMICOLON RIGHTBRACE ELSE ]
+-- On RIGHTBRACE shift to state 140
+
+State 140:
+block -> LEFTBRACE statements RIGHTBRACE . [ SEMICOLON RIGHTBRACE ELSE ]
+-- On SEMICOLON reduce production block -> LEFTBRACE statements RIGHTBRACE 
+-- On RIGHTBRACE reduce production block -> LEFTBRACE statements RIGHTBRACE 
+-- On ELSE reduce production block -> LEFTBRACE statements RIGHTBRACE 
+
+State 141:
+decl -> FUNC ident LEFTPAR loption(parameters) RIGHTPAR loption(return_type) block . SEMICOLON [ TYPE FUNC EOF ]
+-- On SEMICOLON shift to state 142
+
+State 142:
+decl -> FUNC ident LEFTPAR loption(parameters) RIGHTPAR loption(return_type) block SEMICOLON . [ TYPE FUNC EOF ]
+-- On TYPE reduce production decl -> FUNC ident LEFTPAR loption(parameters) RIGHTPAR loption(return_type) block SEMICOLON 
+-- On FUNC reduce production decl -> FUNC ident LEFTPAR loption(parameters) RIGHTPAR loption(return_type) block SEMICOLON 
+-- On EOF reduce production decl -> FUNC ident LEFTPAR loption(parameters) RIGHTPAR loption(return_type) block SEMICOLON 
+
+State 143:
+parameters -> ids_and_type . option(COMMA) [ RIGHTPAR ]
+parameters -> ids_and_type . COMMA parameters [ RIGHTPAR ]
+-- On COMMA shift to state 144
+-- On option(COMMA) shift to state 146
+-- On RIGHTPAR reduce production option(COMMA) -> 
+
+State 144:
+option(COMMA) -> COMMA . [ RIGHTPAR ]
+parameters -> ids_and_type COMMA . parameters [ RIGHTPAR ]
+-- On IDENT shift to state 2
+-- On separated_nonempty_list(COMMA,ident) shift to state 14
+-- On parameters shift to state 145
+-- On ids_and_type shift to state 143
+-- On ident shift to state 24
+-- On RIGHTPAR reduce production option(COMMA) -> COMMA 
+
+State 145:
+parameters -> ids_and_type COMMA parameters . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production parameters -> ids_and_type COMMA parameters 
+
+State 146:
+parameters -> ids_and_type option(COMMA) . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production parameters -> ids_and_type option(COMMA) 
+
+State 147:
+file -> PACKAGE ident_main SEMICOLON boption(import_fmt) list(decl) . EOF [ # ]
+-- On EOF shift to state 148
+
+State 148:
+file -> PACKAGE ident_main SEMICOLON boption(import_fmt) list(decl) EOF . [ # ]
+-- On # reduce production file -> PACKAGE ident_main SEMICOLON boption(import_fmt) list(decl) EOF 
+
+State 149:
+list(decl) -> decl . list(decl) [ EOF ]
+-- On TYPE shift to state 10
+-- On FUNC shift to state 30
+-- On list(decl) shift to state 150
+-- On decl shift to state 149
+-- On EOF reduce production list(decl) -> 
+
+State 150:
+list(decl) -> decl list(decl) . [ EOF ]
+-- On EOF reduce production list(decl) -> decl list(decl) 
+
+State 151:
+ident_main -> ident . [ SEMICOLON ]
+-- On SEMICOLON reduce production ident_main -> ident 
+
+State 152:
+file' -> file . [ # ]
+-- On # accept file
+
