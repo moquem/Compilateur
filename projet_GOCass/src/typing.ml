@@ -1,4 +1,4 @@
-
+ 
 open Format
 open Lib
 open Ast
@@ -13,6 +13,8 @@ exception Error of Ast.location * string
 let error loc e = raise (Error (loc, e))
 
 (* TODO environnement pour les types structure *)
+
+let context_struct = ref [];;
 
 (* TODO environnement pour les fonctions *)
 
@@ -51,7 +53,7 @@ module Env = struct
   let all_vars = ref []
   let check_unused () =
     let check v =
-      if v.v_name <> "_" && (* TODO used *) true then error v.v_loc "unused variable" in
+      if v.v_name <> "_" && v.v_used = false then error v.v_loc "unused variable" in
     List.iter check !all_vars
 
 
@@ -82,8 +84,7 @@ and expr_desc env loc = function
     (* TODO *) assert false
   | PEunop (Uneg | Unot | Ustar as op, e1) ->
     (* TODO *) assert false
-  | PEcall ({id = "fmt.Print"}, el) ->
-    (* TODO *) TEprint [], tvoid, false
+  | PEcall ({id = "fmt.Print"}, el) -> (fmt_used := true; TEprint [], tvoid, false)
   | PEcall ({id="new"}, [{pexpr_desc=PEident {id}}]) ->
      let ty = match id with
        | "int" -> Tint | "bool" -> Tbool | "string" -> Tstring
@@ -109,27 +110,33 @@ and expr_desc env loc = function
   | PEreturn el ->
      (* TODO *) TEreturn [], tvoid, true
   | PEblock el ->
-     (* TODO *) TEblock [], tvoid, false
+      let _ = List.map (expr env) el in (); TEblock [], tvoid, false
   | PEincdec (e, op) ->
      (* TODO *) assert false
   | PEvars _ ->
-     (* TODO *) assert false 
+     (* TODO *) TEvars [], tvoid, false
 
 let found_main = ref false
 
 (* 1. declare structures *)
 let phase1 = function
-  | PDstruct { ps_name = { id = id; loc = loc }} -> (* TODO *) ()
+  | PDstruct { ps_name = ({ id = id; loc = loc }) as res} -> if List.mem res !context_struct then raise (Error (loc,"Structure déjà définie"))
+                                                             else context_struct := res::(!context_struct)
   | PDfunction _ -> ()
 
+let show_phase1 = function
+  | {id = id; loc = loc} -> print_string(id)
+
 let sizeof = function
-  | Tint | Tbool | Tstring | Tptr _ -> 8
+  | Tint | Tbool | Tstring | Tptr _ -> ()
   | _ -> (* TODO *) assert false 
 
 (* 2. declare functions and type fields *)
 let phase2 = function
   | PDfunction { pf_name={id; loc}; pf_params=pl; pf_typ=tyl; } ->
-     (* TODO *) () 
+      begin
+        if id = "main" then found_main := true;
+      end
   | PDstruct { ps_name = {id}; ps_fields = fl } ->
      (* TODO *) () 
 
@@ -138,8 +145,7 @@ let decl = function
   | PDfunction { pf_name={id; loc}; pf_body = e; pf_typ=tyl } ->
     (* TODO check name and type *) 
     let f = { fn_name = id; fn_params = []; fn_typ = []} in
-    let e, rt = expr Env.empty e in
-    TDfunction (f, e)
+    let e, rt = expr Env.empty e in (* TODO *) TDfunction (f, e);
   | PDstruct {ps_name={id}} ->
     (* TODO *) let s = { s_name = id; s_fields = Hashtbl.create 5 } in
      TDstruct s
@@ -149,6 +155,7 @@ let file ~debug:b (imp, dl) =
   (* fmt_imported := imp; *)
   List.iter phase1 dl;
   List.iter phase2 dl;
+  List.iter show_phase1 !context_struct;
   if not !found_main then error dummy_loc "missing method main";
   let dl = List.map decl dl in
   Env.check_unused (); (* TODO variables non utilisees *)

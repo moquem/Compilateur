@@ -1,4 +1,3 @@
-
 (* arbres issus du parseur *)
 
 type location = Lexing.position * Lexing.position
@@ -19,7 +18,7 @@ type constant =
   | Cstring of string
 
 type ptyp =
-  | PTident of ident (* bool, int, struct id *)
+  | PTident of ident (* bool, int, struct, id *)
   | PTptr   of ptyp
 
 type incdec = Inc | Dec (* ++ -- *)

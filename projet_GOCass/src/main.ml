@@ -44,8 +44,8 @@ let () =
     let f = Parser.file Lexer.next_token lb in
     close_in c;
     if !parse_only then exit 0;
-    let f = Typing.file ~debug f in
     (* TODO add "ast_file" when "debug" is true. *)
+    let f = Typing.file ~debug f in
     if type_only then exit 0;
     let f = Rewrite.file ~debug f in
     if debug then eprintf "%a@." Pretty.file f;
