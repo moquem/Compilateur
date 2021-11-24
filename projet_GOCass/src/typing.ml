@@ -18,6 +18,8 @@ let context_struct = ref [];;
 
 (* TODO environnement pour les fonctions *)
 
+let context_func = ref [];;
+
 let rec type_type = function
   | PTident { id = "int" } -> Tint
   | PTident { id = "bool" } -> Tbool
@@ -119,23 +121,45 @@ and expr_desc env loc = function
 let found_main = ref false
 
 (* 1. declare structures *)
+
+let rec name_used l name = match l with
+  | [] -> false
+  | {id;loc}::q when id = name -> true
+  | {id;loc}::q -> name_used q name
+
 let phase1 = function
-  | PDstruct { ps_name = ({ id = id; loc = loc }) as res} -> if List.mem res !context_struct then raise (Error (loc,"Structure déjà définie"))
-                                                             else context_struct := res::(!context_struct)
+  | PDstruct { ps_name = ({ id = id; loc = loc }) as res} -> 
+      begin
+        if name_used !context_struct id then raise (Error (loc,"Structure déjà définie"))
+        else context_struct := res::(!context_struct)
+      end
   | PDfunction _ -> ()
 
 let show_phase1 = function
-  | {id = id; loc = loc} -> print_string(id)
+  | {id = id; loc = loc} -> (print_string(id);print_string("\n"))
 
 let sizeof = function
   | Tint | Tbool | Tstring | Tptr _ -> ()
   | _ -> (* TODO *) assert false 
 
 (* 2. declare functions and type fields *)
+
+let rec param_used l name = match l with
+  | [] -> false
+  | ({loc;id},_):: q when id = name -> true
+  | h::q -> param_used q name
+
+let rec param_distinct l_param = match l_param with
+  | [] -> true
+  | ({loc;id},_)::q -> if param_used q id then false else param_distinct q
+
 let phase2 = function
-  | PDfunction { pf_name={id; loc}; pf_params=pl; pf_typ=tyl; } ->
+  | PDfunction { pf_name=({id; loc}) as res ; pf_params=pl; pf_typ=tyl; } ->
       begin
         if id = "main" then found_main := true;
+        if name_used !context_func id then raise (Error (loc,"Fonction déjà définie"))
+        else context_func := res::(!context_func);
+        if not(param_distinct pl) then raise (Error (loc,"Paramètres passés en double"))
       end
   | PDstruct { ps_name = {id}; ps_fields = fl } ->
      (* TODO *) () 
@@ -155,7 +179,6 @@ let file ~debug:b (imp, dl) =
   (* fmt_imported := imp; *)
   List.iter phase1 dl;
   List.iter phase2 dl;
-  List.iter show_phase1 !context_struct;
   if not !found_main then error dummy_loc "missing method main";
   let dl = List.map decl dl in
   Env.check_unused (); (* TODO variables non utilisees *)
