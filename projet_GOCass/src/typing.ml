@@ -4,6 +4,8 @@ open Lib
 open Ast
 open Tast
 
+open Hashtbl
+
 let debug = ref false
 
 let dummy_loc = Lexing.dummy_pos, Lexing.dummy_pos
@@ -14,20 +16,19 @@ let error loc e = raise (Error (loc, e))
 
 (* TODO environnement pour les types structure *)
 
-let context_struct = ref [];;
-
-let context_field = ref [];;
+let context_struct = create 10;;
 
 (* TODO environnement pour les fonctions *)
 
-let context_func = ref [];;
+let context_func = create 10;;
 
 let rec type_type = function
   | PTident { id = "int" } -> Tint
   | PTident { id = "bool" } -> Tbool
   | PTident { id = "string" } -> Tstring
+  | PTident { id } when mem context_struct id -> Tstruct(find context_struct id)
   | PTptr ty -> Tptr (type_type ty)
-  | _ -> error dummy_loc ("unknown struct ") (* TODO type structure *)
+  | _ -> error dummy_loc ("unknown struct ") 
 
 let rec eq_type ty1 ty2 = match ty1, ty2 with
   | Tint, Tint | Tbool, Tbool | Tstring, Tstring -> true
@@ -117,28 +118,36 @@ and expr_desc env loc = function
       let _ = List.map (expr env) el in (); TEblock [], tvoid, false
   | PEincdec (e, op) ->
      (* TODO *) assert false
-  | PEvars _ ->
-     (* TODO *) TEvars [], tvoid, false
+  | PEvars _ -> 
+     (* TODO *) assert false
+
+
+
 
 let found_main = ref false
 
 (* 1. declare structures *)
 
-let rec name_used l name = match l with
+let rec exist_struct l name = match l with
   | [] -> false
-  | {id;loc}::q when id = name -> true
-  | {id;loc}::q -> name_used q name
+  | {s_name;s_fields}::q when s_name = name -> true
+  | h::q -> exist_struct q name
+
+let field_to_tfield l_field = 
+  let hs_tbl_field = create (List.length l_field) in
+    let rec aux = function
+      | [] -> ()
+      | ({id;loc},typ)::q -> add hs_tbl_field id {f_name = id;f_typ = type_type typ;f_ofs = 0}; aux q
+    in aux l_field; hs_tbl_field
 
 let phase1 = function
-  | PDstruct { ps_name = ({ id = id; loc = loc }) as res} -> 
+  | PDstruct { ps_name = { id ; loc }; ps_fields} -> 
       begin
-        if name_used !context_struct id then raise (Error (loc,"Structure déjà définie"))
-        else context_struct := res::(!context_struct)
+        if mem context_struct id then raise (Error (loc,"Structure déjà définie"))
+        else add context_struct id { s_name = id; s_fields = (field_to_tfield ps_fields)} 
       end
   | PDfunction _ -> ()
-
-let show_phase1 = function
-  | {id = id; loc = loc} -> (print_string(id);print_string("\n"))
+  
 
 let sizeof = function
   | Tint | Tbool | Tstring | Tptr _ -> ()
@@ -158,14 +167,14 @@ let rec param_distinct l_param = match l_param with
 let rec typ_param l_param = match l_param with
   | [] -> true
   | ({loc = loc1 ;id = id1},PTident {loc = loc;id = id})::q when (id = "bool" || id = "int" || id = "id") -> typ_param q
-  | ({loc = loc1 ;id = id1},PTident {loc = loc;id = id})::q when name_used !context_struct id -> typ_param q
+  | ({loc = loc1 ;id = id1},PTident {loc = loc;id = id})::q when List.mem id !context_struct -> typ_param q
   | ({loc;id},PTptr (typ))::q -> typ_param (({loc;id},typ)::q)
   | _ -> false
   
 let rec typ_func l = match l with
   | [] -> true
   | (PTident {id;loc})::q when (id = "bool" || id = "int" || id = "id") -> typ_func q
-  | (PTident {id;loc})::q when name_used !context_struct id -> typ_func q
+  | (PTident {id;loc})::q when List.mem id !context_struct -> typ_func q
   | (PTptr (typ))::q -> typ_func (typ::q)
   | _ -> false
 
@@ -173,7 +182,7 @@ let phase2 = function
   | PDfunction { pf_name=({id; loc}) as res ; pf_params=pl; pf_typ=tyl; } ->
       begin
         if id = "main" then found_main := true;
-        if name_used !context_func id then raise (Error (loc,"Fonction déjà définie"))
+        if name_used !context_func id then raise (Error (loc,"Fonction déjà déclarée"))
         else context_func := res::(!context_func);
         if not(param_distinct pl) then raise (Error (loc,"Paramètre passé en double"));
         if not(typ_param pl) then raise (Error (loc,"Paramètre mal typé (type inexistant)"));
@@ -188,10 +197,12 @@ let phase2 = function
 
 (* 3. type check function bodies *)
 let decl = function
-  | PDfunction { pf_name={id; loc}; pf_body = e; pf_typ=tyl } ->
-    (* TODO check name and type *) 
-    let f = { fn_name = id; fn_params = []; fn_typ = []} in
-    let e, rt = expr Env.empty e in (* TODO *) TDfunction (f, e);
+  | PDfunction { pf_name={id; loc}; pf_body = e; pf_typ=tyl; pf_params=pl } ->
+    begin
+      let f = { fn_name = id; fn_params = []; fn_typ = []} in
+      let e, rt = expr Env.empty e in (* TODO *) TDfunction (f, e);
+    end
+
   | PDstruct {ps_name={id}} ->
     (* TODO *) let s = { s_name = id; s_fields = Hashtbl.create 5 } in
      TDstruct s
