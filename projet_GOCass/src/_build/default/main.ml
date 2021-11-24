@@ -43,8 +43,14 @@ let () =
   try
     let f = Parser.file Lexer.next_token lb in
     close_in c;
+
+    if debug then begin
+      let ast_dot_file = open_out (Filename.chop_suffix file ".go" ^ "_ast.dot") in
+      Printf.fprintf ast_dot_file "%s" (Pretty.get_dot_ast f);
+      close_out ast_dot_file
+    end;
+
     if !parse_only then exit 0;
-    (* TODO add "ast_file" when "debug" is true. *)
     let f = Typing.file ~debug f in
     if type_only then exit 0;
     let f = Rewrite.file ~debug f in
@@ -55,21 +61,18 @@ let () =
     X86_64.print_program fmt code;
     close_out c
   with
-    | Lexer.Lexing_error s ->
-	report_loc (lexeme_start_p lb, lexeme_end_p lb);
-	eprintf "lexical error: %s\n@." s;
-	exit 1
-    | Parser.Error ->
-	report_loc (lexeme_start_p lb, lexeme_end_p lb);
-	eprintf "syntax error\n@.";
-	exit 1
-    | Typing.Error (l, msg) ->
-	report_loc l;
-	eprintf "error: %s\n@." msg;
-	exit 1
-    | e ->
-	eprintf "Anomaly: %s\n@." (Printexc.to_string e);
-	exit 2
-
-
-
+  | Lexer.Lexing_error s ->
+    report_loc (lexeme_start_p lb, lexeme_end_p lb);
+    eprintf "lexical error: %s\n@." s;
+    exit 1
+  | Parser.Error ->
+    report_loc (lexeme_start_p lb, lexeme_end_p lb);
+    eprintf "syntax error\n@.";
+    exit 1
+  | Typing.Error (l, msg) ->
+    report_loc l;
+    eprintf "error: %s\n@." msg;
+    exit 1
+  | e ->
+    eprintf "Anomaly: %s\n@." (Printexc.to_string e);
+    exit 2

@@ -16,6 +16,8 @@ let error loc e = raise (Error (loc, e))
 
 let context_struct = ref [];;
 
+let context_field = ref [];;
+
 (* TODO environnement pour les fonctions *)
 
 let context_func = ref [];;
@@ -153,16 +155,36 @@ let rec param_distinct l_param = match l_param with
   | [] -> true
   | ({loc;id},_)::q -> if param_used q id then false else param_distinct q
 
+let rec typ_param l_param = match l_param with
+  | [] -> true
+  | ({loc = loc1 ;id = id1},PTident {loc = loc;id = id})::q when (id = "bool" || id = "int" || id = "id") -> typ_param q
+  | ({loc = loc1 ;id = id1},PTident {loc = loc;id = id})::q when name_used !context_struct id -> typ_param q
+  | ({loc;id},PTptr (typ))::q -> typ_param (({loc;id},typ)::q)
+  | _ -> false
+  
+let rec typ_func l = match l with
+  | [] -> true
+  | (PTident {id;loc})::q when (id = "bool" || id = "int" || id = "id") -> typ_func q
+  | (PTident {id;loc})::q when name_used !context_struct id -> typ_func q
+  | (PTptr (typ))::q -> typ_func (typ::q)
+  | _ -> false
+
 let phase2 = function
   | PDfunction { pf_name=({id; loc}) as res ; pf_params=pl; pf_typ=tyl; } ->
       begin
         if id = "main" then found_main := true;
         if name_used !context_func id then raise (Error (loc,"Fonction déjà définie"))
         else context_func := res::(!context_func);
-        if not(param_distinct pl) then raise (Error (loc,"Paramètres"^id^"passés en double"))
+        if not(param_distinct pl) then raise (Error (loc,"Paramètre passé en double"));
+        if not(typ_param pl) then raise (Error (loc,"Paramètre mal typé (type inexistant)"));
+        if not(typ_func tyl) then raise (Error (loc,"Fonction mal typée (type inexistant)"))
       end
-  | PDstruct { ps_name = {id}; ps_fields = fl } ->
-     (* TODO *) () 
+  | PDstruct { ps_name = {id;loc}; ps_fields = fl } ->
+      begin
+        if not(param_distinct fl) then raise (Error (loc,"Champs passé en double"));
+        if not(typ_param fl) then raise (Error (loc,"Champs mal typé (type inexistant)"));
+        context_field := fl::(!context_field)
+      end
 
 (* 3. type check function bodies *)
 let decl = function
