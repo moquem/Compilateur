@@ -143,11 +143,17 @@ and expr_desc env loc = function
 
   | PEcall ({id="new"}, _) ->
      error loc "new expects a type"
-     
+
   | PEcall (id, el) ->
      (* TODO *) assert false
+
   | PEfor (e, b) ->
-     (* TODO *) assert false
+    begin
+      let exp1,typ1,rt1 = expr_desc env e.pexpr_loc e.pexpr_desc and exp2,typ2,rt2 = expr_desc env b.pexpr_loc b.pexpr_desc in
+        if not(eq_type typ1 Tbool) then error loc "Expected : boolean expression for the condition"
+        else TEfor ({expr_desc = exp1; expr_typ = typ1},{expr_desc = exp2; expr_typ = typ2}), tvoid, false
+    end
+
   | PEif (e1, e2, e3) ->
     let exp1,typ1,rt1 = expr_desc env e1.pexpr_loc e1.pexpr_desc 
       and exp2,typ2,rt2 = expr_desc env e2.pexpr_loc e2.pexpr_desc
@@ -155,20 +161,28 @@ and expr_desc env loc = function
       if eq_type typ1 Tbool then 
         TEif ({expr_desc = exp1; expr_typ = typ1},{expr_desc = exp2; expr_typ = typ2},{expr_desc = exp3; expr_typ = typ3}),tvoid,rt2&&rt3
       else raise (Error (loc, "Expected : boolean expressions"))
+
   | PEnil -> TEnil, tvoid, false
+
   | PEident {id=id} ->
      (* TODO *) (try let v = Env.find id env in TEident v, v.v_typ, false
       with Not_found -> error loc ("unbound variable " ^ id))
+
   | PEdot (e, id) ->
      (* TODO *) assert false
+
   | PEassign (lvl, el) ->
      (* TODO *) TEassign ([], []), tvoid, false 
+
   | PEreturn el ->
      (* TODO *) TEreturn [], tvoid, true
+
   | PEblock el ->
       (*TODO*) let _ = List.map (expr env) el in (); TEblock [], tvoid, false
+
   | PEincdec (e, op) ->
      (* TODO *) assert false
+
   | PEvars _ -> 
      (* TODO *) TEvars [], tvoid, false
 
