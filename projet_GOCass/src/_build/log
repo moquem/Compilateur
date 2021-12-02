@@ -2,10 +2,10 @@
 # OCAMLPARAM: unset
 # Workspace root: "/home/maena/Documents/Etude/ENS Paris-Saclay/L3/Semestre
 # 1/Projet prog/Compilateur/projet_GOCass/src"
-$ /usr/bin/nproc > /tmp/dune6e8c40.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/dunebc5bc2.output 2> /dev/null
 # Auto-detected concurrency: 4
 # disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dune917eb3.output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune89c840.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -106,35 +106,54 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune917eb3.output
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /usr/bin/ocamldep.opt -modules -intf tast.mli) > _build/default/.main.eobjs/tast.mli.d
 $ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl typing.ml) > _build/default/.main.eobjs/typing.ml.d
-$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/tast.cmi -c -intf tast.mli)
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/typing.cmo -c -impl typing.ml)
-> File "typing.ml", line 36, characters 46-60:
-> 36 |   | PTident { id } -> Tstruct(struct_corresp !context_struct id)
->                                                    ^^^^^^^^^^^^^^
-> Error: This expression has type ('a, 'b) Hashtbl.t
->        but an expression was expected of type 'c ref
-[2]
-$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/pretty.cmo -c -impl pretty.ml)
-> File "pretty.ml", line 183, characters 18-242:
-> 183 | ..................function
-> 184 |   | Tint -> Format.fprintf fmt "int"
-> 185 |   | Tbool -> Format.fprintf fmt "bool"
-> 186 |   | Tstring -> Format.fprintf fmt "string"
-> 187 |   | Tstruct s -> Format.fprintf fmt "%s" s.s_name
-> 188 |   | Tptr ty -> Format.fprintf fmt "*%a" typ ty
-> Warning 8: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> Tmany _
-$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/pretty.cmx -c -impl pretty.ml)
-> File "pretty.ml", line 183, characters 18-242:
-> 183 | ..................function
-> 184 |   | Tint -> Format.fprintf fmt "int"
-> 185 |   | Tbool -> Format.fprintf fmt "bool"
-> 186 |   | Tstring -> Format.fprintf fmt "string"
-> 187 |   | Tstruct s -> Format.fprintf fmt "%s" s.s_name
-> 188 |   | Tptr ty -> Format.fprintf fmt "*%a" typ ty
-> Warning 8: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> Tmany _
+> File "typing.ml", line 91, characters 12-37:
+> 91 |   | PEunop (Uneg | Unot | Ustar as op, e1) ->
+>                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+> Warning 26: unused variable op.
+> File "typing.ml", line 208, characters 50-57:
+> 208 |         else let new_pl = pparam_to_tparam pl and new_typ = ptyp_to_ttyp loc tyl in
+>                                                         ^^^^^^^
+> Warning 26: unused variable new_typ.
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/compile.cmo -c -impl compile.ml)
+> File "compile.ml", line 87, characters 13-40:
+> 87 |   | TEbinop (Blt | Ble | Bgt | Bge as op, e1, e2) ->
+>                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Warning 26: unused variable op.
+> File "compile.ml", line 89, characters 13-51:
+> 89 |   | TEbinop (Badd | Bsub | Bmul | Bdiv | Bmod as op, e1, e2) ->
+>                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Warning 26: unused variable op.
+> File "compile.ml", line 91, characters 13-28:
+> 91 |   | TEbinop (Beq | Bne as op, e1, e2) ->
+>                   ^^^^^^^^^^^^^^^
+> Warning 26: unused variable op.
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/typing.cmx -c -impl typing.ml)
+> File "typing.ml", line 91, characters 12-37:
+> 91 |   | PEunop (Uneg | Unot | Ustar as op, e1) ->
+>                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+> Warning 26: unused variable op.
+> File "typing.ml", line 208, characters 50-57:
+> 208 |         else let new_pl = pparam_to_tparam pl and new_typ = ptyp_to_ttyp loc tyl in
+>                                                         ^^^^^^^
+> Warning 26: unused variable new_typ.
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/rewrite.cmo -c -impl rewrite.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/compile.cmx -c -impl compile.ml)
+> File "compile.ml", line 87, characters 13-40:
+> 87 |   | TEbinop (Blt | Ble | Bgt | Bge as op, e1, e2) ->
+>                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Warning 26: unused variable op.
+> File "compile.ml", line 89, characters 13-51:
+> 89 |   | TEbinop (Badd | Bsub | Bmul | Bdiv | Bmod as op, e1, e2) ->
+>                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Warning 26: unused variable op.
+> File "compile.ml", line 91, characters 13-28:
+> 91 |   | TEbinop (Beq | Bne as op, e1, e2) ->
+>                   ^^^^^^^^^^^^^^^
+> Warning 26: unused variable op.
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/rewrite.cmx -c -impl rewrite.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -o main.bc .main.eobjs/byte/lib.cmo .main.eobjs/byte/typing.cmo .main.eobjs/byte/x86_64.cmo .main.eobjs/byte/compile.cmo .main.eobjs/byte/parser.cmo .main.eobjs/byte/lexer.cmo .main.eobjs/byte/pretty.cmo .main.eobjs/byte/rewrite.cmo .main.eobjs/byte/main.cmo)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -o main.exe .main.eobjs/native/lib.cmx .main.eobjs/native/typing.cmx .main.eobjs/native/x86_64.cmx .main.eobjs/native/compile.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/pretty.cmx .main.eobjs/native/rewrite.cmx .main.eobjs/native/main.cmx)
