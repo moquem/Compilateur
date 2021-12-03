@@ -36,11 +36,6 @@ let rec eq_type ty1 ty2 = match ty1, ty2 with
   | _ -> false
     (* TODO autres types *)
 
-let rec type_return l1 l2 = match l1,l2 with
-  | [],[] -> true
-  | t::q1, {expr_desc;expr_typ}::q2 when eq_type t expr_typ -> type_return q1 q2
-  | _,_ -> false
-
 
 let fmt_used = ref false
 let fmt_imported = ref false
@@ -123,14 +118,14 @@ and expr_desc env loc = function
     begin 
     let exp,rt = expr env e1 in
       if eq_type exp.expr_typ Tint then TEunop (Uneg, exp), Tint, false
-      else error loc "Expected : int type"
+      else error loc "expected : int type"
     end
 
   | PEunop (Unot, e1) ->
     begin 
       let exp,rt = expr env e1 in
         if eq_type exp.expr_typ Tbool then TEunop (Uneg, exp), Tbool, false
-        else error loc "Expected : bool type"
+        else error loc "expected : bool type"
     end
   
   | PEunop (Ustar, e1) ->
@@ -138,27 +133,38 @@ and expr_desc env loc = function
       let exp,rt = expr env e1 in match exp.expr_desc, exp.expr_typ with
         | TEnil, _ -> error loc "empty expression"
         | _, Tptr t -> TEunop (Ustar, exp), t, false
-        | _ -> error loc "Expected : pointeur type"
+        | _ -> error loc "expected : pointeur type"
     end
 
-  | PEcall ({id = "fmt.Print"}, el) -> (fmt_used := true; TEprint [], tvoid, false)
+  | PEcall ({id = "fmt.Print"}, el) -> (fmt_used := true; let tel = List.map (pexpr_to_expr env) el in TEprint tel, tvoid, false)
 
   | PEcall ({id="new"}, [{pexpr_desc=PEident {id}}]) ->
      let ty = match id with
        | "int" -> Tint | "bool" -> Tbool | "string" -> Tstring
-       | _ -> (* TODO *) error loc ("no such type " ^ id) in
+       | _ when mem context_struct id -> Tstruct (find context_struct id) 
+       | _ -> error loc ("no such type " ^ id) in
      TEnew ty, Tptr ty, false
 
   | PEcall ({id="new"}, _) ->
      error loc "new expects a type"
 
   | PEcall (id, el) ->
-     (* TODO *) assert false
+    begin
+     if not(mem context_func id.id) then error loc "function undefined"
+     else 
+      begin
+        let l_entry = List.map (pexpr_to_expr env) el and f,exp = (find context_func id.id) in 
+        match l_entry with
+          | [{expr_desc=TEcall (g,l_entry_g)}] when compare_typ_var f.fn_params g.fn_typ -> TEcall (f,l_entry), Tmany f.fn_typ, false
+          | l when compare_typ_var f.fn_params (ltyp_of_exp l) -> TEcall (f,l_entry), Tmany f.fn_typ, false
+          | _ -> error loc "wrong types for the parameters"
+      end
+    end
 
   | PEfor (e, b) ->
     begin
       let exp1,typ1,rt1 = expr_desc env e.pexpr_loc e.pexpr_desc and exp2,typ2,rt2 = expr_desc env b.pexpr_loc b.pexpr_desc in
-        if not(eq_type typ1 Tbool) then error loc "Expected : boolean expression for the condition"
+        if not(eq_type typ1 Tbool) then error loc "expected : boolean expression for the condition"
         else TEfor ({expr_desc = exp1; expr_typ = typ1},{expr_desc = exp2; expr_typ = typ2}), tvoid, false
     end
 
@@ -168,7 +174,7 @@ and expr_desc env loc = function
       and exp3,typ3,rt3 = expr_desc env e3.pexpr_loc e3.pexpr_desc in
       if eq_type typ1 Tbool then 
         TEif ({expr_desc = exp1; expr_typ = typ1},{expr_desc = exp2; expr_typ = typ2},{expr_desc = exp3; expr_typ = typ3}),tvoid,rt2&&rt3
-      else raise (Error (loc, "Expected : boolean expressions"))
+      else raise (Error (loc, "expected : boolean expressions"))
 
   | PEnil -> TEnil, tvoid, false
 
@@ -193,16 +199,22 @@ and expr_desc env loc = function
   | PEassign (lvl, el) -> 
     begin
     let el1 = List.map (pexpr_to_expr env) el and el2 = List.map (pexpr_to_expr env) el in
-    match el2 with
-      | [{expr_desc=TEcall (f,l);expr_typ}] when compare_typ_2 el1 f.fn_typ -> TEassign (el1,el2), tvoid, false
-      | l when compare_typ_1 el1 el2 -> TEassign (el1,el2), tvoid, false
-      | _ -> error loc "Assignation not possible (wrong type)"
-    end
+      let ltyp1 = ltyp_of_exp el1 and ltyp2 = ltyp_of_exp el2 in
+        match el2 with
+          | [{expr_desc=TEcall (f,l);expr_typ}] when compare_typ ltyp1 f.fn_typ -> TEassign (el1,el2), tvoid, false
+          | l when compare_typ ltyp1 ltyp2 -> TEassign (el1,el2), tvoid, false
+          | _ -> error loc "Assignation not possible (wrong type)"
+        end
 
   | PEreturn el ->
-    let l = List.map (pexpr_to_expr env) el in 
-    if type_return !typ_function l then TEreturn l, tvoid, true
-    else error loc "types don't match the return types of the function"
+    begin
+      let l = List.map (pexpr_to_expr env) el in
+        let ltyp = ltyp_of_exp l in
+        match l with 
+          | [{expr_desc=TEcall (f,l_return);expr_typ}] when (eq_type (Tmany (!typ_function)) expr_typ) -> TEreturn l, expr_typ, true
+          | l when compare_typ ltyp !typ_function -> TEreturn l, Tmany ltyp, true
+          | _ -> error loc "types don't match the return types of the function"
+    end
 
   | PEblock el ->
     let l = List.map (expr env) el in 
@@ -228,20 +240,24 @@ and list_block l =
     | [] -> l_return, rt_block
     | (e,rt)::q -> aux q (rt_block || rt) (l_return@[e])
   in aux l false []
-      
-and compare_typ_1 l1 l2 = match l1,l2 with 
-    | [],[] -> true
-    | [],a -> false
-    | a,[] -> false
-    | {expr_desc=e1;expr_typ=t1}::q1,{expr_desc=e2;expr_typ=t2}::q2 when not(eq_type t1 t2) -> false
-    | h1::q1,h2::q2 -> compare_typ_1 q1 q2
 
-and compare_typ_2 l1 l2 = match l1,l2 with
+and ltyp_of_exp expl =
+    let rec aux l = function
+      | [] -> l
+      | {expr_typ}::q -> aux (l@[expr_typ]) q
+    in aux [] expl
+
+and compare_typ l1 l2 = match l1,l2 with
     | [],[] -> true
-    | [],a -> false
-    | a,[] -> false
-    | {expr_desc;expr_typ}::q1,t::q when eq_type expr_typ t -> compare_typ_2 q1 q
-    | _ -> false
+    | t1::q1,t2::q2 when (eq_type t1 t2) -> compare_typ q1 q2
+    | _,_ -> false
+
+and compare_typ_var lvar lparam = match lvar,lparam with
+    | [],[] -> true
+    | {v_typ=t1}::q1,t2::q2 when eq_type t1 t2 -> compare_typ_var q1 q2
+    | _,_ -> false
+
+
 
 let found_main = ref false
 
@@ -339,12 +355,13 @@ let decl = function
   | PDfunction { pf_name={id; loc}; pf_body = e; pf_typ=tyl; pf_params=pl } ->
     begin
       typ_function := ptyp_to_ttyp loc tyl;
-      let f = { fn_name = id; fn_params = []; fn_typ = []} in
-      let e, rt = expr Env.empty e in (* TODO *) TDfunction (f, e);
+      let e, rt = expr Env.empty e in 
+      if rt = false then error loc "function returns nothing"
+      else let f,exp = find context_func id in TDfunction (f, e)
     end
 
   | PDstruct {ps_name={id}} ->
-    (* TODO *) let s = { s_name = id; s_fields = Hashtbl.create 5 } in
+    let s = find context_struct id in
      TDstruct s
 
 let file ~debug:b (imp, dl) =
