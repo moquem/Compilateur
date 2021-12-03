@@ -18,6 +18,8 @@ let context_struct = create 10
 
 let context_func = create 10
 
+let typ_function = ref []
+
 
 let rec type_type loc = function
   | PTident { id = "int" } -> Tint
@@ -106,31 +108,32 @@ and expr_desc env loc = function
 
   | PEunop (Uamp, e1) -> 
     begin
-    let exp1,typ1,rt1 = expr_desc env e1.pexpr_loc e1.pexpr_desc in 
-          match exp1,typ1 with
-            | TEnil,_ -> error loc "Empty expression" 
-            | _,Tptr t -> TEunop (Uamp, {expr_desc = exp1; expr_typ = typ1}), t, false 
-            | _ -> error loc "Expected : pointeur type"
+    let exp,rt = expr env e1 in 
+          match exp.expr_desc,exp.expr_typ with
+            | TEident v,_ -> TEunop (Uamp, exp), Tptr exp.expr_typ, false 
+            | _ -> error loc "Expected : l-value"
     end
 
   | PEunop (Uneg, e1) -> 
     begin 
-    let exp1,typ1,rt1 = expr_desc env e1.pexpr_loc e1.pexpr_desc in
-      if eq_type typ1 Tint then TEunop (Uneg, {expr_desc = exp1; expr_typ = typ1}), Tint, false
+    let exp,rt = expr env e1 in
+      if eq_type exp.expr_typ Tint then TEunop (Uneg, exp), Tint, false
       else error loc "Expected : int type"
     end
 
   | PEunop (Unot, e1) ->
     begin 
-      let exp1,typ1,rt1 = expr_desc env e1.pexpr_loc e1.pexpr_desc in
-        if eq_type typ1 Tbool then TEunop (Uneg, {expr_desc = exp1; expr_typ = typ1}), Tbool, false
+      let exp,rt = expr env e1 in
+        if eq_type exp.expr_typ Tbool then TEunop (Uneg, exp), Tbool, false
         else error loc "Expected : bool type"
     end
   
-  | PEunop (Ustar as op, e1) ->
+  | PEunop (Ustar, e1) ->
     begin
-      let exp1,typ1,rt1 = expr_desc env e1.pexpr_loc e1.pexpr_desc in
-        TEunop (Ustar, {expr_desc = exp1; expr_typ = typ1}), Tptr typ1, false
+      let exp,rt = expr env e1 in match exp.expr_desc, exp.expr_typ with
+        | TEnil, _ -> error loc "empty expression"
+        | _, Tptr t -> TEunop (Ustar, exp), t, false
+        | _ -> error loc "Expected : pointeur type"
     end
 
   | PEcall ({id = "fmt.Print"}, el) -> (fmt_used := true; TEprint [], tvoid, false)
@@ -165,26 +168,76 @@ and expr_desc env loc = function
   | PEnil -> TEnil, tvoid, false
 
   | PEident {id=id} ->
-     (* TODO *) (try let v = Env.find id env in TEident v, v.v_typ, false
-      with Not_found -> error loc ("unbound variable " ^ id))
+    begin  
+    try let v = Env.find id env in 
+      v.v_used <- true;
+      TEident v, v.v_typ, false
+    with Not_found -> error loc ("unbound variable " ^ id)
+    end
 
   | PEdot (e, id) ->
-     (* TODO *) assert false
+    begin
+      let exp,typ,rt = expr_desc env e.pexpr_loc e.pexpr_desc in
+        match typ with
+          | Tstruct s | Tptr Tstruct s when exp <> TEnil -> let fields = s.s_fields in 
+                            if not(mem fields id.id) then error loc "undefined field"
+                            else let f = find fields id.id in TEdot ({expr_desc=exp; expr_typ=typ}, f), f.f_typ, false
+          | _ -> error loc "is not a structure"
+    end
 
-  | PEassign (lvl, el) ->
-     (* TODO *) TEassign ([], []), tvoid, false 
+  | PEassign (lvl, el) -> 
+    begin
+    let el1 = List.map (pexpr_to_expr env) el and el2 = List.map (pexpr_to_expr env) el in
+    match el2 with
+      | [{expr_desc=TEcall (f,l);expr_typ}] when compare_typ_2 el1 f.fn_typ -> TEassign (el1,el2), tvoid, false
+      | l when compare_typ_1 el1 el2 -> TEassign (el1,el2), tvoid, false
+      | _ -> error loc "Assignation not possible (wrong type)"
+    end
 
   | PEreturn el ->
-     (* TODO *) TEreturn [], tvoid, true
+    begin
+      let l = List.map (pexpr_to_expr env) el in 
+      match l with 
+      | [{expr_desc=TEcall (f,l_return);expr_typ}] when compare_typ_2 l f.fn_typ -> TEreturn l, tvoid, true
+      | l when compare_typ_2 l !typ_function -> TEreturn l, tvoid, true
+      | _ -> error loc "types don't match the return types of the function"
+    end
 
   | PEblock el ->
-      (*TODO*) let _ = List.map (expr env) el in (); TEblock [], tvoid, false
+    let l = List.map (expr env) el in 
+      let l_expr, rt = list_block l in
+        TEblock l_expr, tvoid, rt
 
   | PEincdec (e, op) ->
-     (* TODO *) assert false
+    begin
+      let exp,rt = expr env e in 
+        match exp.expr_desc with
+        | TEident v when eq_type v.v_typ Tint -> TEincdec (exp,op), Tint, true
+        | _ -> error loc "Wrong type or variable not declared"
+    end
 
   | PEvars _ -> 
      (* TODO *) TEvars [], tvoid, false
+
+and pexpr_to_expr env e = 
+  let exp,rt = expr env e in exp
+
+and list_block l = 
+  let rec aux l rt_block l_return = match l with
+    | [] -> l_return, rt_block
+    | (e,rt)::q -> aux q (rt_block || rt) (l_return@[e])
+  in aux l false []
+      
+and compare_typ_1 l1 l2 = match l1,l2 with 
+    | [],[] -> true
+    | {expr_desc=e1;expr_typ=t1}::q1,{expr_desc=e2;expr_typ=t2}::q2 when (eq_type t1 t2) -> compare_typ_1 q1 q2
+    | _,_ -> false
+
+and compare_typ_2 l1 l2 = match l1,l2 with
+    | [],[] -> true
+    | {expr_desc;expr_typ}::q1,t::q when eq_type expr_typ t -> compare_typ_2 q1 q
+    | _,_ -> false
+
 
 
 let found_main = ref false
@@ -200,14 +253,14 @@ let field_to_tfield l_field =
   let hs_tbl_field = create (List.length l_field) in
     let rec aux = function
       | [] -> ()
-      | ({id;loc},typ)::q -> if mem hs_tbl_field id then raise (Error (loc, "Champs passé en double"))
+      | ({id;loc},typ)::q -> if mem hs_tbl_field id then raise (Error (loc, "field already existing"))
                              else add hs_tbl_field id {f_name = id;f_typ = type_type loc typ;f_ofs = 0}; aux q
     in aux l_field; hs_tbl_field
 
 let phase1 = function
   | PDstruct { ps_name = { id ; loc }; ps_fields} -> 
       begin
-        if mem context_struct id then raise (Error (loc,"Structure déjà définie"))
+        if mem context_struct id then raise (Error (loc,"struct already defined"))
         else add context_struct id { s_name = id; s_fields = (field_to_tfield ps_fields)} 
       end
   | PDfunction _ -> ()
@@ -268,20 +321,21 @@ let phase2 = function
   | PDfunction { pf_name={id; loc} ; pf_params=pl; pf_typ=tyl; pf_body} ->
       begin
         if id = "main" then found_main := true;
-        if mem context_func id then raise (Error (loc,"Fonction déjà déclarée"))
+        if mem context_func id then raise (Error (loc,"func already declared"))
         else let new_pl = pparam_to_tparam pl and new_typ = ptyp_to_ttyp loc tyl in
-          let f = {fn_name = id; fn_params = (pparam_to_tparam pl); fn_typ = (ptyp_to_ttyp loc tyl)} in
+          let f = {fn_name = id; fn_params = (pparam_to_tparam pl); fn_typ = new_typ} in
             add context_func id (f,pf_body);
-          if not(param_distinct new_pl) then raise (Error (loc,"Paramètre passé en double"))
+          if not(param_distinct new_pl) then raise (Error (loc,"parameter already given"))
       end
   | PDstruct { ps_name = {id;loc}; ps_fields = fl } -> 
-      if not(typ_field fl) then raise (Error (loc,"Champs mal typé (type inexistant)"))
+      if not(typ_field fl) then raise (Error (loc,"uninexisting type for the field"))
 
 
 (* 3. type check function bodies *)
 let decl = function
   | PDfunction { pf_name={id; loc}; pf_body = e; pf_typ=tyl; pf_params=pl } ->
     begin
+      typ_function := ptyp_to_ttyp loc tyl;
       let f = { fn_name = id; fn_params = []; fn_typ = []} in
       let e, rt = expr Env.empty e in (* TODO *) TDfunction (f, e);
     end
@@ -299,4 +353,5 @@ let file ~debug:b (imp, dl) =
   let dl = List.map decl dl in
   Env.check_unused (); (* TODO variables non utilisees *)
   if imp && not !fmt_used then error dummy_loc "fmt imported but not used";
+  if not(imp) && !fmt_used then error dummy_loc "fmt used but not imported";
   dl
