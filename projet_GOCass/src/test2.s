@@ -4,8 +4,6 @@ main:
 	call F_main
 	xorq %rax, %rax
 	ret
-F_foo:
-F_bar:
 F_main:
 
 print_int:
