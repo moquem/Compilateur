@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type S struct {
 	c int
 }
@@ -9,5 +11,7 @@ type T struct {
 }
 
 func main() {
-	return
+	var r *int
+	r = nil
+	fmt.Print(r)
 }

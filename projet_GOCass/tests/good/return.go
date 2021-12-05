@@ -1,5 +1,5 @@
 package main
 
-func main() int {
-    return 42;
+func main() {
+	return
 }

@@ -20,6 +20,14 @@ let context_func = create 10
 
 let typ_function = ref []
 
+let rec debug_type = function
+ | Tint -> print_string "int\n"
+ | Tbool -> print_string "bool\n"
+ | Tstring -> print_string "string\n"
+ | Tmany [] -> print_string "tvoid"
+ | Tptr t -> print_string "pointeur"; debug_type t
+ | Tmany (h::q) -> debug_type h; debug_type (Tmany q)
+ | Tstruct s -> print_string s.s_name
 
 let create_list length var =
   let rec aux length var l = match length with 
@@ -37,9 +45,11 @@ let rec type_type loc = function
 
 let rec eq_type ty1 ty2 = match ty1, ty2 with
   | Tint, Tint | Tbool, Tbool | Tstring, Tstring -> true
-  | Tstruct s1, Tstruct s2 -> s1 == s2
+  | Tstruct s1, Tstruct s2 -> s1.s_name = s2.s_name
   | Tptr ty1, Tptr ty2 -> eq_type ty1 ty2
-  | _ -> false
+  | Tmany [], Tmany [] -> true
+  | Tmany (t1::q1), Tmany (t2::q2) -> eq_type (Tmany q1) (Tmany q2)
+  | _,_ -> false
     (* TODO autres types *)
 
 
@@ -116,9 +126,8 @@ and expr_desc env loc = function
   | PEunop (Uamp, e1) -> 
     begin
     let exp,rt = expr env e1 in 
-          match exp.expr_desc,exp.expr_typ with
-            | TEident v,_ -> TEunop (Uamp, exp), Tptr exp.expr_typ, false 
-            | _ -> error loc "expected : l-value"
+      is_l_value loc exp;
+      TEunop (Uamp, exp), Tptr exp.expr_typ, false 
     end
 
   | PEunop (Uneg, e1) -> 
@@ -162,9 +171,13 @@ and expr_desc env loc = function
       begin
         let l_entry = List.map (pexpr_to_expr env) el and f,exp = (find context_func id.id) in 
         match l_entry with
-          | [{expr_desc=TEcall (g,l_entry_g)}] when compare_typ_var f.fn_params g.fn_typ -> TEcall (f,l_entry), Tmany f.fn_typ, false
-          | l when compare_typ_var f.fn_params (ltyp_of_exp l) -> TEcall (f,l_entry), Tmany f.fn_typ, false
-          | _ -> error loc "wrong types for the parameters"
+          | [{expr_desc=TEcall (g,l_entry_g)}] when compare_typ_var f.fn_params g.fn_typ ->
+            if List.length f.fn_typ = 1 then TEcall (f,l_entry), List.hd (f.fn_typ), false
+            else TEcall (f,l_entry), Tmany f.fn_typ, false
+          | l when compare_typ_var f.fn_params (ltyp_of_exp l) -> 
+            if List.length f.fn_typ = 1 then TEcall (f,l_entry), List.hd (f.fn_typ), false
+            else TEcall (f,l_entry), Tmany f.fn_typ, false
+          | _ -> error loc "arguments : wrong types"
       end
     end
 
@@ -195,11 +208,11 @@ and expr_desc env loc = function
 
   | PEdot (e, id) ->
     begin
-      let exp,typ,rt = expr_desc env e.pexpr_loc e.pexpr_desc in
-        match typ with
-          | Tstruct s | Tptr Tstruct s when exp <> TEnil -> let fields = s.s_fields in 
+      let exp,rt = expr env e in
+        match exp.expr_typ with
+          | Tstruct s | Tptr Tstruct s when exp.expr_desc <> TEnil -> let fields = s.s_fields in 
                             if not(mem fields id.id) then error loc "undefined field"
-                            else let f = find fields id.id in TEdot ({expr_desc=exp; expr_typ=typ}, f), f.f_typ, false
+                            else let f = find fields id.id in TEdot (exp, f), f.f_typ, false
           | _ -> error loc "is not a structure"
     end
 
@@ -212,15 +225,17 @@ and expr_desc env loc = function
             let v = Env.find id !env_f in
             {expr_desc = TEident v;expr_typ = v.v_typ}::aux t
           with Not_found -> error pexpr_loc ("unbound variable " ^ id)) 
-      | _ -> error loc "not a l-value"
+      | h::t -> (fst (expr env h))::(aux t)
     in 
     let el1 = aux lvl and el2 = List.map (pexpr_to_expr env) el in
+      (List.iter (is_l_value loc) el1; List.iter (if_tvoid_then_nil loc) el2;
       let ltyp1 = ltyp_of_exp el1 and ltyp2 = ltyp_of_exp el2 in
         match el2 with
           | [{expr_desc=TEcall (f,l);expr_typ}] when compare_typ ltyp1 f.fn_typ -> TEassign (el1,el2), tvoid, false
           | l when compare_typ ltyp1 ltyp2 -> TEassign (el1,el2), tvoid, false
           | _ -> error loc "assignation not possible (wrong type)"
-        end
+      )
+    end
 
   | PEreturn el ->
     begin
@@ -233,17 +248,17 @@ and expr_desc env loc = function
     end
 
   | PEblock el ->
-    let l = List.map (expr env) el in 
+    let old_env = !env_f
+    and l = List.map (expr env) el in 
       let l_expr, rt = list_block l in
-        env_f := env;
+        env_f := old_env;
         TEblock l_expr, tvoid, rt
 
   | PEincdec (e, op) ->
     begin
       let exp,rt = expr env e in 
-        match exp.expr_desc with
-        | TEident v when eq_type v.v_typ Tint -> TEincdec (exp,op), Tint, true
-        | _ -> error loc "wrong type or variable not declared"
+        (is_l_value loc exp;
+        if eq_type exp.expr_typ Tint then TEincdec (exp,op), Tint, true else error loc "wrong type")
     end
 
   | PEvars (il,ty,pl) -> 
@@ -277,12 +292,12 @@ and expr_desc env loc = function
               let e1 = {expr_desc=TEvars lvar; expr_typ=tvoid} and e2,rt2 = expr env pe2 in
                 TEblock [e1;e2], tvoid, false)
               else error loc "uncompatible types"
-            | _ -> let tyl = ltyp_of_exp tl in 
-              if compare_typ ltyp tyl then 
-              (let lvar = add_var_typ il ltyp loc in 
-              let e1 = {expr_desc=TEvars lvar; expr_typ=tvoid} and e2,rt2 = expr env pe2 in
-                TEblock [e1;e2], tvoid, false)
-              else error loc "uncompatible types"
+            | _ ->  let tyl = ltyp_of_exp tl in
+                    if compare_typ tyl ltyp then 
+                      (let lvar = add_var_typ il ltyp loc in 
+                      let e1 = {expr_desc=TEvars lvar; expr_typ=tvoid} and e2,rt2 = expr env pe2 in
+                        TEblock [e1;e2], tvoid, false)
+                    else error loc "uncompatible types"
         end
     end
 
@@ -300,23 +315,34 @@ and ltyp_of_exp = function
 
 and compare_typ l1 l2 = match l1,l2 with
     | [],[] -> true
+    | (Tmany [])::q1,(Tptr t)::q2 -> compare_typ q1 q2
+    | (Tptr t)::q1,(Tmany [])::q2 -> compare_typ q1 q2 
     | t1::q1,t2::q2 when (eq_type t1 t2) -> compare_typ q1 q2
-    | _,_ -> false
+    | _ -> false
 
 and compare_typ_var lvar lparam = match lvar,lparam with
     | [],[] -> true
     | {v_typ=t1}::q1,t2::q2 when eq_type t1 t2 -> compare_typ_var q1 q2
     | _,_ -> false
 
-and add_var_typ li lt loc_act = 
-    let rec aux li lt lvar = match li,lt with
-      | [],[] -> lvar
-      | {loc;id}::q1,t::q2 -> let env,v = Env.var id loc t !env_f in (env_f := env; aux q1 q2 (lvar@[v]))
-      | _,_ -> error loc_act "unvalid type for assignation"
-    in aux li lt []
+and add_var_typ li lt loc_act = match li,lt with
+    | [],[] -> []
+    | {loc;id}::q1,t::q2 -> let env,v = Env.var id loc t !env_f in (env_f := env; v::(add_var_typ q1 q2 loc_act))
+    | _,_ -> error loc_act "cannot assign"
 
 and non_empty loc = function
     | {expr_desc=TEnil} -> error loc "empty expression"
+    | _ -> ()
+
+and is_l_value loc = function
+    | {expr_desc=TEident v} -> ()
+    | {expr_desc=TEdot (v,f)} -> ()
+    | {expr_desc=TEunop (Ustar,v)} -> ()
+    | _ -> error loc "not a l-value"
+
+and if_tvoid_then_nil loc = function
+    | {expr_desc=TEnil} -> ()
+    | {expr_typ= Tmany []} -> error loc "cannot assign a unit expression"
     | _ -> ()
 
 let found_main = ref false
