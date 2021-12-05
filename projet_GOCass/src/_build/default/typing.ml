@@ -58,11 +58,13 @@ let fmt_imported = ref false
 
 let evar v = { expr_desc = TEident v; expr_typ = v.v_typ }
 
-let new_var =
-  let id = ref 0 in
-  fun x loc ?(used=false) ty ->
-    incr id;
-    { v_name = x; v_id = !id; v_loc = loc; v_typ = ty; v_used = used; v_addr = false }
+let id_var = ref 0
+
+let id_var_entry_bloc = ref 0
+
+let new_var x loc ?(used=false) ty =
+    incr id_var;
+    { v_name = x; v_id = !id_var; v_loc = loc; v_typ = ty; v_used = used; v_addr = false }
 
 module Env = struct
   module M = Map.Make(String)
@@ -86,8 +88,9 @@ module Env = struct
 end
 
 let env_f = ref Env.empty
+let tvoid = Tmany [];;
 
-let tvoid = Tmany []
+
 let make d ty = { expr_desc = d; expr_typ = ty }
 let stmt d = make d tvoid
 
@@ -189,12 +192,12 @@ and expr_desc env loc = function
     end
 
   | PEif (e1, e2, e3) ->
-    let exp1,typ1,rt1 = expr_desc env e1.pexpr_loc e1.pexpr_desc 
-      and exp2,typ2,rt2 = expr_desc env e2.pexpr_loc e2.pexpr_desc
-      and exp3,typ3,rt3 = expr_desc env e3.pexpr_loc e3.pexpr_desc in
-      if eq_type typ1 Tbool then 
-        TEif ({expr_desc = exp1; expr_typ = typ1},{expr_desc = exp2; expr_typ = typ2},{expr_desc = exp3; expr_typ = typ3}),tvoid,rt2&&rt3
-      else raise (Error (loc, "expected : boolean expressions"))
+    let exp1,rt1 = expr env e1
+      and exp2,rt2 = expr env e2
+      and exp3,rt3 = expr env e3 in
+      if eq_type exp1.expr_typ Tbool then 
+        TEif (exp1,exp2,exp3),tvoid,rt2&&rt3
+      else error loc "expected : boolean expressions"
 
   | PEnil -> TEnil, tvoid, false
 
@@ -229,10 +232,10 @@ and expr_desc env loc = function
     in 
     let el1 = aux lvl and el2 = List.map (pexpr_to_expr env) el in
       (List.iter (is_l_value loc) el1; List.iter (if_tvoid_then_nil loc) el2;
-      let ltyp1 = ltyp_of_exp el1 and ltyp2 = ltyp_of_exp el2 in
+      let ltyp2 = ltyp_of_exp el2 in
         match el2 with
-          | [{expr_desc=TEcall (f,l);expr_typ}] when compare_typ ltyp1 f.fn_typ -> TEassign (el1,el2), tvoid, false
-          | l when compare_typ ltyp1 ltyp2 -> TEassign (el1,el2), tvoid, false
+          | [{expr_desc=TEcall (f,l);expr_typ}] when compare_typ_assign el1 f.fn_typ -> TEassign (el1,el2), tvoid, false
+          | l when compare_typ_assign el1 ltyp2 -> TEassign (el1,el2), tvoid, false
           | _ -> error loc "assignation not possible (wrong type)"
       )
     end
@@ -248,11 +251,12 @@ and expr_desc env loc = function
     end
 
   | PEblock el ->
-    let old_env = !env_f
-    and l = List.map (expr env) el in 
+    let old_env = !env_f and old_entry_var = !id_var_entry_bloc in
+    (id_var_entry_bloc := !id_var;
+    let l = List.map (expr env) el in 
       let l_expr, rt = list_block l in
-        env_f := old_env;
-        TEblock l_expr, tvoid, rt
+        env_f := old_env; id_var_entry_bloc := old_entry_var;
+        TEblock l_expr, tvoid, rt)
 
   | PEincdec (e, op) ->
     begin
@@ -324,9 +328,24 @@ and compare_typ_var lvar lparam = match lvar,lparam with
     | {v_typ=t1}::q1,t2::q2 when eq_type t1 t2 -> compare_typ_var q1 q2
     | _,_ -> false
 
+and compare_typ_assign el ltyp = match el,ltyp with
+    | [],[] -> true
+    | {expr_typ=Tptr t}::q1,(Tmany [])::q2 -> compare_typ_assign q1 q2
+    | {expr_desc=TEident v}::q1,t::q2 when v.v_name = "_" -> compare_typ_assign q1 q2
+    | {expr_typ=t1}::q1,t2::q2 when (eq_type t1 t2) -> compare_typ_assign q1 q2
+    | _,_ -> false
+    
+
+
 and add_var_typ li lt loc_act = match li,lt with
     | [],[] -> []
-    | {loc;id}::q1,t::q2 -> let env,v = Env.var id loc t !env_f in (env_f := env; v::(add_var_typ q1 q2 loc_act))
+    | {loc;id}::q1,t::q2 -> 
+        begin
+        try let v = Env.find id !env_f in 
+          if v.v_id > !id_var_entry_bloc && id <> "_" then error loc_act "variable already assigned in this block"
+          else (let env,v = Env.var id loc t !env_f in (env_f := env; v::(add_var_typ q1 q2 loc_act)))
+        with Not_found -> let env,v = Env.var id loc t !env_f in (env_f := env; v::(add_var_typ q1 q2 loc_act))
+        end
     | _,_ -> error loc_act "cannot assign"
 
 and non_empty loc = function
@@ -374,11 +393,9 @@ let rec pparam_to_tparam = function
   | [] -> []
   | ({loc;id},typ)::q -> (new_var id loc (type_type loc typ))::(pparam_to_tparam q)
   
-let ptyp_to_ttyp loc l_typ =
-  let rec aux l nv_l = match l with
-    | [] -> nv_l
-    | h::q -> aux q (nv_l@[(type_type loc h)])
-  in aux l_typ []
+let rec ptyp_to_ttyp loc = function
+  | [] -> []
+  | h::q -> (type_type loc h)::(ptyp_to_ttyp loc q)
 
 let rec name_param_used l_param name = match l_param with
   | [] -> false
@@ -430,6 +447,7 @@ let decl = function
       typ_function := ptyp_to_ttyp loc tyl;
       let f,exp = find context_func id in
           env_f := (lvar_in_env f.fn_params);
+          env_f := Env.add (!env_f) (new_var "_" dummy_loc tvoid);
           let e, rt = expr !env_f e in 
             if rt = false && f.fn_typ <> [] then error loc "function returns nothing"
             else let f,exp = find context_func id in TDfunction (f, e)
