@@ -100,13 +100,13 @@ and expr_desc env loc = function
   | PEbinop (op, e1, e2) ->
     let exp1,rt1 = expr env e1 and exp2,rt2 = expr env e2 in
       begin
-        if not(eq_type exp1.expr_typ exp2.expr_typ) then raise (Error (loc,"Different types")) 
+        if not(eq_type exp1.expr_typ exp2.expr_typ) then raise (Error (loc,"unmatching types")) 
         else match op with | Badd | Bsub | Bmul | Bdiv | Bmod | Blt | Ble | Bgt | Bge when not(eq_type exp1.expr_typ Tint) -> error loc ("Type incompatible avec l'opérateur")
-                           | Band | Bor when not(eq_type exp1.expr_typ Tbool) -> error loc ("Type incompatible avec l'opérateur")
+                           | Band | Bor when not(eq_type exp1.expr_typ Tbool) -> error loc ("unmatching types with the operator")
                            | Beq | Bne when eq_type exp1.expr_typ Tbool || eq_type exp1.expr_typ Tint -> 
                               begin
                               match exp1.expr_desc,exp2.expr_desc with 
-                                | TEnil,TEnil -> error loc ("Empty expressions")
+                                | TEnil,TEnil -> error loc ("empty expressions")
                                 | _ ->  TEbinop (op, exp1, exp2),Tbool,false
                               end
                            | Blt | Ble | Bgt | Bge -> TEbinop (op, exp1, exp2),Tbool,false
@@ -247,43 +247,56 @@ and expr_desc env loc = function
     end
 
   | PEvars (il,ty,pl) -> 
-    let tl = List.map (pexpr_to_expr env) pl in 
-    match ty with
-    | None -> 
-      begin
-        match tl with
-        | [] -> error loc "variables : invalid type"
-        | [{expr_desc=TEcall (f,params)}] -> let lvar = add_var_typ il f.fn_typ loc in TEvars lvar, tvoid, false
-        | _ -> List.iter (non_empty loc) tl; let tyl = ltyp_of_exp tl in let lvar = add_var_typ il tyl loc in TEvars lvar, tvoid, false
-      end
-    | Some typ -> 
-      begin
-      let t = type_type loc typ in 
-        let ltyp = create_list (List.length il) t in
+    begin
+    let tl = List.map (pexpr_to_expr env) pl and pil = List.map (fun x -> {pexpr_desc=PEident x;pexpr_loc=loc}) il in 
+      let pe2 = {pexpr_desc=PEassign (pil,pl);pexpr_loc = loc} in
+      match ty with
+      | None -> 
+        begin
           match tl with
-          | [] -> let lvar = add_var_typ il ltyp loc in TEvars lvar, tvoid, false
+          | [] -> error loc "variables : invalid type"
           | [{expr_desc=TEcall (f,params)}] -> 
-            if compare_typ ltyp f.fn_typ then (let lvar = add_var_typ il ltyp loc in TEvars lvar, tvoid, false)
-            else error loc "uncompatible types"
-          | _ -> let tyl = ltyp_of_exp tl in 
-            if compare_typ ltyp tyl then (let lvar = add_var_typ il ltyp loc in TEvars lvar, tvoid, false)
-            else error loc "uncompatible types"
-      end
+            let lvar = add_var_typ il f.fn_typ loc in 
+              let e1 = {expr_desc=TEvars lvar; expr_typ=tvoid} and e2,rt2 = expr env pe2 in
+                TEblock [e1;e2], tvoid, false
+          | _ -> List.iter (non_empty loc) tl; 
+            let tyl = ltyp_of_exp tl in 
+              let lvar = add_var_typ il tyl loc in 
+                let e1 = {expr_desc=TEvars lvar; expr_typ=tvoid} and e2,rt2 = expr env pe2 in
+                TEblock [e1;e2], tvoid, false
+        end
+      | Some typ -> 
+        begin
+        let t = type_type loc typ in 
+          let ltyp = create_list (List.length il) t in
+            match tl with
+            | [] -> let lvar = add_var_typ il ltyp loc in TEvars lvar, tvoid, false
+            | [{expr_desc=TEcall (f,params)}] -> 
+              if compare_typ ltyp f.fn_typ then 
+              (let lvar = add_var_typ il ltyp loc in 
+              let e1 = {expr_desc=TEvars lvar; expr_typ=tvoid} and e2,rt2 = expr env pe2 in
+                TEblock [e1;e2], tvoid, false)
+              else error loc "uncompatible types"
+            | _ -> let tyl = ltyp_of_exp tl in 
+              if compare_typ ltyp tyl then 
+              (let lvar = add_var_typ il ltyp loc in 
+              let e1 = {expr_desc=TEvars lvar; expr_typ=tvoid} and e2,rt2 = expr env pe2 in
+                TEblock [e1;e2], tvoid, false)
+              else error loc "uncompatible types"
+        end
+    end
 
 and pexpr_to_expr env e = 
   let exp,rt = expr env e in exp
 
-and list_block l = 
-  let rec aux l rt_block l_return = match l with
-    | [] -> l_return, rt_block
-    | (e,rt)::q -> aux q (rt_block || rt) (l_return@[e])
-  in aux l false []
+and list_block = function
+  | [] -> [],false
+  | (e,rt)::q -> let l,rt_block = list_block q in e::l,(rt || rt_block)
 
-and ltyp_of_exp expl =
-    let rec aux l = function
-      | [] -> l
-      | {expr_typ}::q -> aux (l@[expr_typ]) q
-    in aux [] expl
+
+and ltyp_of_exp = function
+    | [] -> []
+    | {expr_typ}::q -> expr_typ::(ltyp_of_exp q)
 
 and compare_typ l1 l2 = match l1,l2 with
     | [],[] -> true
@@ -386,7 +399,8 @@ let rec typ_field l_fields = match l_fields with
 let phase2 = function
   | PDfunction { pf_name={id; loc} ; pf_params=pl; pf_typ=tyl; pf_body} ->
       begin
-        if id = "main" then found_main := true;
+        if id = "main" then 
+          (found_main := true; if pl <> [] then error loc "main takes no argument"; if tyl <> [] then error loc "main has no type");
         if mem context_func id then raise (Error (loc,"func already declared"))
         else let new_pl = pparam_to_tparam pl and new_typ = ptyp_to_ttyp loc tyl in
           let f = {fn_name = id; fn_params = (pparam_to_tparam pl); fn_typ = new_typ} in
@@ -410,7 +424,7 @@ let find_cycle_struc loc s lvu =
     Hashtbl.iter (aux lvu) fields
   and aux lvu key f =
     match f.f_typ with
-      | Tstruct sf -> if List.mem sf.s_name lvu then (error loc "Recursive structure")
+      | Tstruct sf -> if List.mem sf.s_name lvu then (error loc "recursive structure")
                       else etude_fields sf.s_fields (sf.s_name::lvu)
       | _ -> ()
   in etude_fields s.s_fields lvu
