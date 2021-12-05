@@ -24,10 +24,10 @@ let rec debug_type = function
  | Tint -> print_string "int\n"
  | Tbool -> print_string "bool\n"
  | Tstring -> print_string "string\n"
- | Tmany [] -> print_string "tvoid"
+ | Tmany [] -> print_string "tvoid\n"
  | Tptr t -> print_string "pointeur"; debug_type t
  | Tmany (h::q) -> debug_type h; debug_type (Tmany q)
- | Tstruct s -> print_string s.s_name
+ | Tstruct s -> print_string s.s_name; print_string "\n"
 
 let create_list length var =
   let rec aux length var l = match length with 
@@ -45,10 +45,10 @@ let rec type_type loc = function
 
 let rec eq_type ty1 ty2 = match ty1, ty2 with
   | Tint, Tint | Tbool, Tbool | Tstring, Tstring -> true
-  | Tstruct s1, Tstruct s2 -> s1.s_name = s2.s_name
+  | Tstruct s1, Tstruct s2 -> s1 == s2
   | Tptr ty1, Tptr ty2 -> eq_type ty1 ty2
   | Tmany [], Tmany [] -> true
-  | Tmany (t1::q1), Tmany (t2::q2) -> eq_type (Tmany q1) (Tmany q2)
+  | Tmany (t1::q1), Tmany (t2::q2) -> (eq_type t1 t2) && (eq_type (Tmany q1) (Tmany q2))
   | _,_ -> false
     (* TODO autres types *)
 
@@ -293,7 +293,7 @@ and expr_desc env loc = function
                 TEblock [e1;e2], tvoid, false)
               else error loc "uncompatible types"
             | _ ->  let tyl = ltyp_of_exp tl in
-                    if compare_typ tyl ltyp then 
+                    if compare_typ ltyp tyl then 
                       (let lvar = add_var_typ il ltyp loc in 
                       let e1 = {expr_desc=TEvars lvar; expr_typ=tvoid} and e2,rt2 = expr env pe2 in
                         TEblock [e1;e2], tvoid, false)
@@ -315,7 +315,6 @@ and ltyp_of_exp = function
 
 and compare_typ l1 l2 = match l1,l2 with
     | [],[] -> true
-    | (Tmany [])::q1,(Tptr t)::q2 -> compare_typ q1 q2
     | (Tptr t)::q1,(Tmany [])::q2 -> compare_typ q1 q2 
     | t1::q1,t2::q2 when (eq_type t1 t2) -> compare_typ q1 q2
     | _ -> false
@@ -349,11 +348,6 @@ let found_main = ref false
 
 (* 1. declare structures *)
 
-let rec exist_struct l name = match l with
-  | [] -> false
-  | {s_name;s_fields}::q when s_name = name -> true
-  | h::q -> exist_struct q name
-
 let phase1 = function
   | PDstruct { ps_name = { id ; loc }; ps_fields} -> 
       begin
@@ -369,19 +363,16 @@ let sizeof = function
 
 (* 2. declare functions and type fields *)
 
-let field_to_tfield l_field = 
-  let hs_tbl_field = create (List.length l_field) in
-    let rec aux = function
-      | [] -> ()
-      | ({id;loc},typ)::q -> if mem hs_tbl_field id then raise (Error (loc, "field already existing"))
-                             else add hs_tbl_field id {f_name = id;f_typ = type_type loc typ;f_ofs = 0}; aux q
-    in aux l_field; hs_tbl_field
+let field_to_tfield l_field struct_fields = 
+  let rec aux = function
+    | [] -> ()
+    | ({id;loc},typ)::q -> if mem struct_fields id then raise (Error (loc, "field already existing"))
+                            else add struct_fields id {f_name = id;f_typ = type_type loc typ;f_ofs = 0}; aux q
+  in aux l_field
 
-let pparam_to_tparam l_var =
-  let rec aux l nv_l = match l with
-    | [] -> nv_l
-    | ({loc;id},typ)::q -> aux q (nv_l@[(new_var id loc (type_type loc typ))])
-  in aux l_var []
+let rec pparam_to_tparam = function
+  | [] -> []
+  | ({loc;id},typ)::q -> (new_var id loc (type_type loc typ))::(pparam_to_tparam q)
   
 let ptyp_to_ttyp loc l_typ =
   let rec aux l nv_l = match l with
@@ -398,29 +389,6 @@ let rec param_distinct = function
   | [] -> true
   | {v_name}::q -> if name_param_used q v_name then false else param_distinct q
 
-let rec type_well_founded = function
-  | Tint | Tbool | Tstring -> true 
-  | Tstruct({s_name;_}) when mem context_struct s_name -> true
-  | Tptr(t) -> type_well_founded t
-  | _ -> false
-
-let rec typ_param = function 
-  | [] -> true
-  | {v_typ}::q when type_well_founded v_typ -> typ_param q
-  | _ -> false
-
-let rec typ_func = function
-  | [] -> true
-  | typ::q when typ = Tint || typ = Tbool || typ = Tstring -> typ_func q
-  | Tstruct({s_name;_})::q when mem context_struct s_name  -> typ_func q
-  | Tptr(t)::q -> typ_func (t::q)
-  | _ -> false
-
-
-let rec typ_field l_fields = match l_fields with
-  | [] -> true 
-  | ({id;loc},typ)::q when type_well_founded (type_type loc typ) -> typ_field q
-  | _::q -> false
 
 let phase2 = function
   | PDfunction { pf_name={id; loc} ; pf_params=pl; pf_typ=tyl; pf_body} ->
@@ -434,7 +402,7 @@ let phase2 = function
           if not(param_distinct new_pl) then raise (Error (loc,"parameter already given"))
       end
   | PDstruct { ps_name = {id;loc}; ps_fields = fl } -> 
-      let fields = field_to_tfield fl in replace context_struct id {s_name=id;s_fields=fields}
+      let fields = (find context_struct id).s_fields in field_to_tfield fl fields
 
 
 (* 3. type check function bodies *)

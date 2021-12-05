@@ -2,10 +2,10 @@
 # OCAMLPARAM: unset
 # Workspace root: "/home/maena/Documents/Etude/ENS Paris-Saclay/L3/Semestre
 # 1/Projet prog/Compilateur/projet_GOCass/src"
-$ /usr/bin/nproc > /tmp/dune09c657.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/dunede153d.output 2> /dev/null
 # Auto-detected concurrency: 4
 # disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dune9b8b2c.output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune0df341.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -123,6 +123,7 @@ $ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -n
 > Warning 26: unused variable op.
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/rewrite.cmo -c -impl rewrite.ml)
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -o main.bc .main.eobjs/byte/lib.cmo .main.eobjs/byte/typing.cmo .main.eobjs/byte/x86_64.cmo .main.eobjs/byte/compile.cmo .main.eobjs/byte/parser.cmo .main.eobjs/byte/lexer.cmo .main.eobjs/byte/pretty.cmo .main.eobjs/byte/rewrite.cmo .main.eobjs/byte/main.cmo)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/compile.cmx -c -impl compile.ml)
 > File "compile.ml", line 87, characters 13-40:
 > 87 |   | TEbinop (Blt | Ble | Bgt | Bge as op, e1, e2) ->
@@ -136,7 +137,6 @@ $ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eo
 > 91 |   | TEbinop (Beq | Bne as op, e1, e2) ->
 >                   ^^^^^^^^^^^^^^^
 > Warning 26: unused variable op.
-$ (cd _build/default && /usr/bin/ocamlc.opt -g -o main.bc .main.eobjs/byte/lib.cmo .main.eobjs/byte/typing.cmo .main.eobjs/byte/x86_64.cmo .main.eobjs/byte/compile.cmo .main.eobjs/byte/parser.cmo .main.eobjs/byte/lexer.cmo .main.eobjs/byte/pretty.cmo .main.eobjs/byte/rewrite.cmo .main.eobjs/byte/main.cmo)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/typing.cmx -c -impl typing.ml)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/rewrite.cmx -c -impl rewrite.ml)
