@@ -28,8 +28,11 @@ open Format
 open Ast
 open Tast
 open X86_64
+open Typing
 
 let debug = ref false
+
+let tvoid = Tmany []
 
 let strings = Hashtbl.create 32
 let alloc_string =
@@ -102,13 +105,17 @@ let rec expr env e = match e.expr_desc with
     (* TODO code pour & *) assert false 
   | TEunop (Ustar, e1) ->
     (* TODO code pour * *) assert false 
-  | TEprint el ->
-    let h = List.hd el in 
+  | TEprint el -> 
+    begin 
+      match el with
+      | [] -> nop
+      | h::q ->
       begin
       match h.expr_typ with
-        | Tint -> (expr env h) ++ movq (reg rbp) (reg rdi) ++ call "print_int" 
+        | Tint -> (expr env h) ++ (call "print_int") ++ (expr env {expr_desc=(TEprint q);expr_typ=tvoid})
         | _ -> assert false
       end
+    end
   | TEident x ->
     (* TODO code pour x *) assert false 
   | TEassign ([{expr_desc=TEident x}], [e1]) ->
@@ -117,8 +124,12 @@ let rec expr env e = match e.expr_desc with
     (* TODO code pour x1,... := e1,... *) assert false 
   | TEassign (_, _) ->
      assert false
-  | TEblock el ->
-     (* TODO code pour block *) assert false
+  | TEblock el -> 
+  begin
+  match el with 
+      | [] -> nop
+      | h::q -> (expr env h) ++ (expr env {expr_desc = TEblock q; expr_typ = tvoid})
+  end
   | TEif (e1, e2, e3) ->
      (* TODO code pour if *) assert false
   | TEfor (e1, e2) ->
@@ -142,7 +153,8 @@ let rec expr env e = match e.expr_desc with
 
 let function_ f e =
   if !debug then eprintf "function %s:@." f.fn_name;
-  (* TODO code pour fonction *) let s = f.fn_name in label ("F_" ^ s) 
+  let text = expr Env.empty e in 
+  let s = f.fn_name in ( label ("F_" ^ s) ++ text ++ inline "ret" )
 
 let decl code = function
   | TDfunction (f, e) -> code ++ function_ f e
@@ -168,7 +180,7 @@ print_int:
 "; (* TODO print pour d'autres valeurs *)
    (* TODO appel malloc de stdlib *)
     data =
-      label "S_int" ++ string "%ld" ++
+      label "S_int" ++ string "%ld\n" ++
       (Hashtbl.fold (fun l s d -> label l ++ string s ++ d) strings nop)
     ;
   }

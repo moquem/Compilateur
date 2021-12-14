@@ -1,1 +1,1 @@
-compile.ml: Ast Format Hashtbl List Tast Typing X86_64
+compile.ml: Ast Env Format Hashtbl List Tast Typing X86_64
