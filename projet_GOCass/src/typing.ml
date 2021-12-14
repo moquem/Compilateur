@@ -173,6 +173,8 @@ and expr_desc env loc = function
      else 
       begin
         let l_entry = List.map (pexpr_to_expr env) el and f,exp = (find context_func id.id) in 
+        if f.fn_params = [] && l_entry <> [] then error loc "function takes no argument"
+        else
         match l_entry with
           | [{expr_desc=TEcall (g,l_entry_g)}] when compare_typ_var f.fn_params g.fn_typ ->
             if List.length f.fn_typ = 1 then TEcall (f,l_entry), List.hd (f.fn_typ), false
@@ -202,6 +204,8 @@ and expr_desc env loc = function
   | PEnil -> TEnil, tvoid, false
 
   | PEident {id=id} ->
+    if id = "_" then error loc "_ cannot be called"
+    else
     begin  
     try let v = Env.find id !env_f in 
       v.v_used <- true;
@@ -354,7 +358,7 @@ and non_empty loc = function
 
 and is_l_value loc = function
     | {expr_desc=TEident v} -> ()
-    | {expr_desc=TEdot (v,f)} -> ()
+    | {expr_desc=TEdot (v,f)} -> is_l_value loc v
     | {expr_desc=TEunop (Ustar,v)} -> ()
     | _ -> error loc "not a l-value"
 

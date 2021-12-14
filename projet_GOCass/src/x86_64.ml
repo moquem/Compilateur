@@ -141,7 +141,7 @@ let pr_alist fmt l =
 let movb a b = ins "movb %a, %a" a () b ()
 let movw a b = ins "movw %a, %a" a () b ()
 let movl a b = ins "movl %a, %a" a () b ()
-let movq a b = ins "movq %a, %a" a () b ()
+let movq a b = ins "movq %a, %a" a () b () (* utile *)
 
 let movabsq a b = ins "movabsq %a, %s" a () b
 
@@ -161,7 +161,7 @@ let movzwq a b = ins "movzwq %a, %s" a () b
 let leab op r = ins "leab %a, %s" op () r
 let leaw op r = ins "leaw %a, %s" op () r
 let leal op r = ins "leal %a, %s" op () r
-let leaq op r = ins "leaq %a, %s" op () r
+let leaq op r = ins "leaq %a, %s" op () r (* utile *)
 
 let incb a = ins "incb %a" a ()
 let incw a = ins "incw %a" a ()

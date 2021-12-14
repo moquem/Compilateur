@@ -87,7 +87,11 @@ let rec expr env e = match e.expr_desc with
   | TEbinop (Blt | Ble | Bgt | Bge as op, e1, e2) ->
     (* TODO code pour comparaison ints *) assert false 
   | TEbinop (Badd | Bsub | Bmul | Bdiv | Bmod as op, e1, e2) ->
-    (* TODO code pour arithmetique ints *) assert false 
+    begin
+    match op with
+      | Badd -> (expr env e1) ++ pushq (reg rdi) ++ (expr env e2) ++ popq rbx ++ addq (reg rbx) (reg rdi)
+      | _ -> assert false
+    end
   | TEbinop (Beq | Bne as op, e1, e2) ->
     (* TODO code pour egalite toute valeur *) assert false 
   | TEunop (Uneg, e1) ->
@@ -99,7 +103,12 @@ let rec expr env e = match e.expr_desc with
   | TEunop (Ustar, e1) ->
     (* TODO code pour * *) assert false 
   | TEprint el ->
-    (* TODO code pour Print *) assert false 
+    let h = List.hd el in 
+      begin
+      match h.expr_typ with
+        | Tint -> (expr env h) ++ movq (reg rbp) (reg rdi) ++ call "print_int" 
+        | _ -> assert false
+      end
   | TEident x ->
     (* TODO code pour x *) assert false 
   | TEassign ([{expr_desc=TEident x}], [e1]) ->
