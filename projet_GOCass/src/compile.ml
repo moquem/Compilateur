@@ -88,19 +88,32 @@ let rec expr env e = match e.expr_desc with
   | TEbinop (Bor, e1, e2) ->
     (* TODO code pour OU logique lazy *) assert false 
   | TEbinop (Blt | Ble | Bgt | Bge as op, e1, e2) ->
-    (* TODO code pour comparaison ints *) assert false 
+    begin
+    let t1 = (expr env e1) ++ pushq (reg rdi) ++ (expr env e2) ++ popq rbx ++ cmpq (reg rdi) (reg rbx) 
+    and l1,l2 = new_label (),new_label () in
+      let t2 = movq (imm 0) (reg rdi) ++ jmp l2 ++ label l1 ++ movq (imm 1) (reg rdi) ++ label l2 in
+      match op with
+        | Blt -> t1 ++ jl l1 ++ t2
+        | Ble -> t1 ++ jle l1 ++ t2
+        | Bgt -> t1 ++ jg l1 ++ t2
+        | Bge -> t1 ++ jge l1 ++ t2
+    end
   | TEbinop (Badd | Bsub | Bmul | Bdiv | Bmod as op, e1, e2) ->
     begin
+    let t = (expr env e1) ++ pushq (reg rdi) ++ (expr env e2) in
     match op with
-      | Badd -> (expr env e1) ++ pushq (reg rdi) ++ (expr env e2) ++ popq rbx ++ addq (reg rbx) (reg rdi)
-      | _ -> assert false
+      | Badd -> t ++ popq rbx ++ addq (reg rbx) (reg rdi)
+      | Bsub -> t ++ movq (reg rdi) (reg rbx) ++ popq rdi ++ subq (reg rbx) (reg rdi)
+      | Bmul -> t ++ popq rbx ++ imulq (reg rbx) (reg rdi)
+      | Bdiv -> t ++ popq rax ++ movq (imm 0) (reg rdx) ++ idivq (reg rdi) ++ movq (reg rax) (reg rdi)
+      | Bmod -> t ++ popq rax ++ movq (imm 0) (reg rdx) ++ idivq (reg rdi) ++ movq (reg rdx) (reg rdi)
     end
   | TEbinop (Beq | Bne as op, e1, e2) ->
     (* TODO code pour egalite toute valeur *) assert false 
   | TEunop (Uneg, e1) ->
-    (* TODO code pour negation ints *) assert false 
+    (expr env e1) ++ negq (reg rdi) 
   | TEunop (Unot, e1) ->
-    (* TODO code pour negation bool *) assert false 
+    (expr env e1) ++ notq (reg rdi)
   | TEunop (Uamp, e1) ->
     (* TODO code pour & *) assert false 
   | TEunop (Ustar, e1) ->
@@ -112,7 +125,7 @@ let rec expr env e = match e.expr_desc with
       | h::q ->
       begin
       match h.expr_typ with
-        | Tint -> (expr env h) ++ (call "print_int") ++ (expr env {expr_desc=(TEprint q);expr_typ=tvoid})
+        | Tint | Tbool -> (expr env h) ++ (call "print_int") ++ (expr env {expr_desc=(TEprint q);expr_typ=tvoid})
         | _ -> assert false
       end
     end

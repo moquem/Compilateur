@@ -116,7 +116,7 @@ and expr_desc env loc = function
         if not(eq_type exp1.expr_typ exp2.expr_typ) then raise (Error (loc,"unmatching types")) 
         else match op with | Badd | Bsub | Bmul | Bdiv | Bmod | Blt | Ble | Bgt | Bge when not(eq_type exp1.expr_typ Tint) -> error loc ("Type incompatible avec l'opérateur")
                            | Band | Bor when not(eq_type exp1.expr_typ Tbool) -> error loc ("unmatching types with the operator")
-                           | Beq | Bne when eq_type exp1.expr_typ Tbool || eq_type exp1.expr_typ Tint -> 
+                           | Beq | Bne -> 
                               begin
                               match exp1.expr_desc,exp2.expr_desc with 
                                 | TEnil,TEnil -> error loc ("empty expressions")
