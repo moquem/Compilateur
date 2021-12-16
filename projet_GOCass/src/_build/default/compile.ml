@@ -84,14 +84,44 @@ let rec expr env e = match e.expr_desc with
   | TEconstant (Cstring s) ->
     (* TODO code pour constante string *) assert false 
   | TEbinop (Band, e1, e2) ->
-    (* TODO code pour ET logique lazy *) assert false 
+    let l1,l2 = new_label(),new_label() in
+    (expr env e1) 
+    ++ movq (imm 0) (reg rbx) 
+    ++ cmpq (reg rdi) (reg rbx) 
+    ++ je l1 
+    ++ (expr env e2)
+    ++ movq (imm 0) (reg rbx)
+    ++ cmpq (reg rdi) (reg rbx) 
+    ++ je l1 
+    ++ movq (imm 1) (reg rdi) ++ jmp l2
+    ++ label l1 ++ movq (imm 0) (reg rdi) 
+    ++ label l2
   | TEbinop (Bor, e1, e2) ->
-    (* TODO code pour OU logique lazy *) assert false 
+    let l1,l2 = new_label(),new_label() in
+    (expr env e1)
+    ++ movq (imm 0) (reg rbx)
+    ++ cmpq (reg rdi) (reg rbx)
+    ++ jne l1
+    ++ (expr env e2)
+    ++ movq (imm 0) (reg rbx)
+    ++ cmpq (reg rdi) (reg rbx) 
+    ++ jne l1 
+    ++ movq (imm 0) (reg rdi) ++ jmp l2
+    ++ label l1 ++ movq (imm 1) (reg rdi) 
+    ++ label l2
   | TEbinop (Blt | Ble | Bgt | Bge as op, e1, e2) ->
     begin
-    let t1 = (expr env e1) ++ pushq (reg rdi) ++ (expr env e2) ++ popq rbx ++ cmpq (reg rdi) (reg rbx) 
+    let t1 = (expr env e1) 
+            ++ pushq (reg rdi) 
+            ++ (expr env e2) 
+            ++ popq rbx 
+            ++ cmpq (reg rdi) (reg rbx) 
     and l1,l2 = new_label (),new_label () in
-      let t2 = movq (imm 0) (reg rdi) ++ jmp l2 ++ label l1 ++ movq (imm 1) (reg rdi) ++ label l2 in
+      let t2 = movq (imm 0) (reg rdi) 
+            ++ jmp l2 
+            ++ label l1 
+            ++ movq (imm 1) (reg rdi) 
+            ++ label l2 in
       match op with
         | Blt -> t1 ++ jl l1 ++ t2
         | Ble -> t1 ++ jle l1 ++ t2
@@ -144,9 +174,11 @@ let rec expr env e = match e.expr_desc with
       | h::q -> (expr env h) ++ (expr env {expr_desc = TEblock q; expr_typ = tvoid})
   end
   | TEif (e1, e2, e3) ->
-     (* TODO code pour if *) assert false
+    let l1,l2 = new_label(),new_label() in
+     (expr env e1) ++ movq (imm 0) (reg rbx) ++ cmpq (reg rdi) (reg rbx) ++ jne l1 ++ (expr env e3) ++ jmp l2 ++ label l1 ++ (expr env e2) ++ label l2
   | TEfor (e1, e2) ->
-     (* TODO code pour for *) assert false
+    let l1,l2 = new_label(),new_label() in
+    label l1 ++ (expr env e1) ++ movq (imm 0) (reg rbx) ++ cmpq (reg rdi) (reg rbx) ++ je l2 ++ (expr env e2) ++ jmp l1 ++ label l2
   | TEnew ty ->
      (* TODO code pour new S *) assert false
   | TEcall (f, el) ->
