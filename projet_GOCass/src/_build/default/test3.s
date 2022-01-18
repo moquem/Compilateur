@@ -16,7 +16,7 @@ F_main:
 	movq $0, %rdi
 	popq %rbx
 	cmpq %rdi, %rbx
-	jge L_8
+	jg L_8
 	movq $0, %rdi
 	jmp L_7
 L_8:
@@ -24,13 +24,13 @@ L_8:
 L_7:
 	movq $0, %rbx
 	cmpq %rdi, %rbx
-	je L_4
+	jne L_4
 	movq $13, %rdi
 	pushq %rdi
 	movq $10, %rdi
 	popq %rbx
 	cmpq %rdi, %rbx
-	jl L_6
+	jg L_6
 	movq $0, %rdi
 	jmp L_5
 L_6:
@@ -38,18 +38,24 @@ L_6:
 L_5:
 	movq $0, %rbx
 	cmpq %rdi, %rbx
-	je L_4
-	movq $1, %rdi
+	jne L_4
+	movq $0, %rdi
 	jmp L_3
 L_4:
-	movq $0, %rdi
+	movq $1, %rdi
 L_3:
 	movq $0, %rbx
 	cmpq %rdi, %rbx
 	jne L_2
 	jmp L_1
 L_2:
-	movq $1, %rdi
+	movq $S_2, %rdi
+	call puts
+	movq $3, %rdi
+	call print_int
+	movq $S_1, %rdi
+	call puts
+	movq $4, %rdi
 	call print_int
 L_1:
 ret
@@ -62,3 +68,7 @@ print_int:
 	.data
 S_int:
 	.string "%ld"
+S_2:
+	.string "hello, world"
+S_1:
+	.string "bouhbouh"

@@ -89,7 +89,8 @@ let rec expr env e = match e.expr_desc with
   | TEnil ->
     xorq (reg rdi) (reg rdi)
   | TEconstant (Cstring s) ->
-    (* TODO code pour constante string *) assert false 
+    let label = alloc_string s in
+    movq (ilab label) (reg rdi)
   | TEbinop (Band, e1, e2) ->
     let l1,l2 = new_label(),new_label() in
     (expr env e1) 
@@ -165,11 +166,15 @@ let rec expr env e = match e.expr_desc with
         | Tint | Tbool -> (expr env h) 
                           ++ (call "print_int") 
                           ++ (expr env {expr_desc=(TEprint q);expr_typ=tvoid})
+        | Tstring -> (expr env h)
+                     ++ call "printf"
+                     ++ (expr env {expr_desc=(TEprint q);expr_typ=tvoid})
         | _ -> assert false
       end
     end
   | TEident x ->
-    (* TODO code pour x *) assert false 
+    movq (imm (-x.v_pile)) (reg r10)
+    ++ inline "movq 0(%rbp,%r10,0) %rdi"
   | TEassign ([{expr_desc=TEident x}], [e1]) ->
     (* TODO code pour x := e *) assert false 
   | TEassign ([lv], [e1]) ->

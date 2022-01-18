@@ -49,8 +49,10 @@ L_3:
 	jne L_2
 	jmp L_1
 L_2:
-	movq $1, %rdi
-	call print_int
+	movq $S_2, %rdi
+	call printf
+	movq $S_1, %rdi
+	call printf
 L_1:
 ret
 print_int:
@@ -62,3 +64,7 @@ print_int:
 	.data
 S_int:
 	.string "%ld"
+S_2:
+	.string "%s"
+S_1:
+	.string "hello, world"

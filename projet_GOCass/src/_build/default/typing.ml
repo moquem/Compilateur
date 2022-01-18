@@ -64,7 +64,7 @@ let id_var_entry_bloc = ref 0
 
 let new_var x loc ?(used=false) ty =
     incr id_var;
-    { v_name = x; v_id = !id_var; v_loc = loc; v_typ = ty; v_used = used; v_addr = false }
+    { v_name = x; v_id = !id_var; v_loc = loc; v_typ = ty; v_used = used; v_addr = false; v_pile = 0;}
 
 module Env = struct
   module M = Map.Make(String)
