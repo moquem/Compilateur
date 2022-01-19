@@ -5,59 +5,11 @@ main:
 	xorq %rax, %rax
 	ret
 F_main:
-	movq $10, %rdi
-	pushq %rdi
-	movq $2, %rdi
-	popq %rax
-	movq $0, %rdx
-	idivq %rdi
-	movq %rdx, %rdi
-	pushq %rdi
-	movq $0, %rdi
-	popq %rbx
-	cmpq %rdi, %rbx
-	jg L_8
-	movq $0, %rdi
-	jmp L_7
-L_8:
-	movq $1, %rdi
-L_7:
-	movq $0, %rbx
-	cmpq %rdi, %rbx
-	jne L_4
-	movq $13, %rdi
-	pushq %rdi
-	movq $10, %rdi
-	popq %rbx
-	cmpq %rdi, %rbx
-	jg L_6
-	movq $0, %rdi
-	jmp L_5
-L_6:
-	movq $1, %rdi
-L_5:
-	movq $0, %rbx
-	cmpq %rdi, %rbx
-	jne L_4
-	movq $0, %rdi
-	jmp L_3
-L_4:
-	movq $1, %rdi
-L_3:
-	movq $0, %rbx
-	cmpq %rdi, %rbx
-	jne L_2
-	jmp L_1
-L_2:
-	movq $S_2, %rdi
-	call puts
+	pushq $0
 	movq $3, %rdi
+	movq %rdi, 0(%rbp)
+	movq 0(%rbp), %rdi
 	call print_int
-	movq $S_1, %rdi
-	call puts
-	movq $4, %rdi
-	call print_int
-L_1:
 ret
 print_int:
         movq    %rdi, %rsi
@@ -68,7 +20,3 @@ print_int:
 	.data
 S_int:
 	.string "%ld"
-S_2:
-	.string "hello, world"
-S_1:
-	.string "bouhbouh"

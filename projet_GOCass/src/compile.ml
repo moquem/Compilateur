@@ -35,7 +35,6 @@ open Format
 open Ast
 open Tast
 open X86_64
-open Typing
 
 let debug = ref false
 
@@ -60,13 +59,11 @@ let new_label =
 
 type env = {
   exit_label: string;
-  ofs_this: int;
-  nb_locals: int ref; (* maximum *)
   next_local: int; (* 0, 1, ... *)
 }
 
 let empty_env =
-  { exit_label = ""; ofs_this = -1; nb_locals = ref 0; next_local = 0 }
+  { exit_label = ""; next_local = 0 }
 
 let mk_bool d = { expr_desc = d; expr_typ = Tbool }
 
@@ -153,9 +150,9 @@ let rec expr env e = match e.expr_desc with
   | TEunop (Unot, e1) ->
     (expr env e1) ++ notq (reg rdi)
   | TEunop (Uamp, e1) ->
-    (* TODO code pour & *) assert false 
+    (expr env e1) 
   | TEunop (Ustar, e1) ->
-    (* TODO code pour * *) assert false 
+    (expr env e1) ++ movq (ind rdi) (reg rdi)
   | TEprint el -> 
     begin 
       match el with
@@ -172,20 +169,23 @@ let rec expr env e = match e.expr_desc with
         | _ -> assert false
       end
     end
-  | TEident x ->
-    movq (imm (-x.v_pile)) (reg r10)
-    ++ inline "movq 0(%rbp,%r10,0) %rdi"
-  | TEassign ([{expr_desc=TEident x}], [e1]) ->
-    (* TODO code pour x := e *) assert false 
+  | TEident x -> movq (ind ~ofs:(x.v_pile) rbp) (reg rdi)
+  | TEassign ([{expr_desc=TEident x}], [e1]) -> (expr env e1) ++ movq (reg rdi) (ind ~ofs:(x.v_pile) rbp) 
   | TEassign ([lv], [e1]) ->
-    (* TODO code pour x1,... := e1,... *) assert false 
-  | TEassign (_, _) ->
-     assert false
+    assert false
+  | TEassign (lv, el) ->
+  begin
+    match (lv, el) with
+    | h1::q1, h2::q2 -> (expr env {expr_desc=TEassign ([h1],[h2]);expr_typ=tvoid}) ++ (expr env {expr_desc=TEassign (q1,q2);expr_typ=tvoid})
+    | _,_ -> nop
+    end
   | TEblock el -> 
   begin
+  let cur_env = ref env and nb_local = ref 0 in
   match el with 
       | [] -> nop
-      | h::q -> (expr env h) ++ (expr env {expr_desc = TEblock q; expr_typ = tvoid})
+      | ({expr_desc = TEvars vl})::q -> (nb_local := !nb_local + (List.length vl)); decl_var cur_env nop vl ++ (expr !cur_env {expr_desc = TEblock q; expr_typ = tvoid})
+      | h::q -> (expr !cur_env h) ++ (expr !cur_env {expr_desc = TEblock q; expr_typ = tvoid})
   end
   | TEif (e1, e2, e3) ->
     let l1,l2 = new_label(),new_label() in
@@ -208,7 +208,7 @@ let rec expr env e = match e.expr_desc with
   | TEnew ty ->
      (* TODO code pour new S *) assert false
   | TEcall (f, el) ->
-     (* TODO code pour appel fonction *) assert false
+     jmp ("F_"^(f.fn_name))
   | TEdot (e1, {f_ofs=ofs}) ->
      (* TODO code pour e.f *) assert false
   | TEvars _ ->
@@ -221,11 +221,24 @@ let rec expr env e = match e.expr_desc with
      assert false
   | TEincdec (e1, op) ->
     (* TODO code pour return e++, e-- *) assert false
+and
+ decl_var env text = function
+  | [] -> text
+  | v::q -> (v.v_pile <- !env.next_local); env := {exit_label = !env.exit_label; next_local = !env.next_local - 8}; decl_var env (text ++ pushq (imm 0)) q
+
 
 let function_ f e =
   if !debug then eprintf "function %s:@." f.fn_name;
-  let text = expr Env.empty e in 
-  let s = f.fn_name in ( label ("F_" ^ s) ++ text ++ inline "ret" )
+  let text = expr empty_env e in 
+  let s = f.fn_name in 
+    ( label ("F_" ^ s) 
+    ++ pushq (reg rbp) 
+    ++ movq (reg rsp) (reg rbp) 
+    ++ text 
+    ++ label ("E_" ^ s)
+    ++ movq (reg rbp) (reg rsp)
+    ++ popq rbp
+    ++ ret )
 
 let decl code = function
   | TDfunction (f, e) -> code ++ function_ f e
