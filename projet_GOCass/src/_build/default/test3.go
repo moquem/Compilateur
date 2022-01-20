@@ -3,6 +3,6 @@ package main
 import "fmt"
 
 func main() {
-	var x = 3
-	fmt.Print(x)
+	var x, y = 3, 5
+	fmt.Print(x, y)
 }

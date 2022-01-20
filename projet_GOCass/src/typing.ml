@@ -29,6 +29,25 @@ let rec debug_type = function
  | Tmany (h::q) -> debug_type h; debug_type (Tmany q)
  | Tstruct s -> print_string s.s_name; print_string "\n"
 
+let debug_expr = function
+| TEskip -> print_string "skip\n"
+| TEconstant _ -> print_string "constante\n"
+| TEbinop _ -> print_string "binop\n"
+| TEunop _ -> print_string "unop\n"
+| TEnil -> print_string "vide\n"
+| TEnew _ -> print_string "new\n"
+| TEcall _ -> print_string "appel fonction\n"
+| TEident _ -> print_string "variable\n"
+| TEdot _ -> print_string "champ structure\n"
+| TEassign _ -> print_string "assignation\n"
+| TEvars _ -> print_string "decl variable\n"
+| TEif _ -> print_string "if\n"
+| TEreturn _ -> print_string "return\n"
+| TEblock _ -> print_string "block\n"
+| TEfor _ -> print_string "boucle for\n"
+| TEprint _ -> print_string "print\n"
+| TEincdec _ -> print_string "incr/decr\n"
+
 let create_list length var =
   let rec aux length var l = match length with 
     | 0 -> l
@@ -257,7 +276,8 @@ and expr_desc env loc = function
   | PEblock el ->
     let old_env = !env_f and old_entry_var = !id_var_entry_bloc in
     (id_var_entry_bloc := !id_var;
-    let l = List.map (expr env) el in 
+    let l = List.map (traitement_block env) el in 
+      let l = List.flatten l in
       let l_expr, rt = list_block l in
         env_f := old_env; id_var_entry_bloc := old_entry_var;
         TEblock l_expr, tvoid, rt)
@@ -308,6 +328,17 @@ and expr_desc env loc = function
                     else error loc "uncompatible types"
         end
     end
+
+and traitement_block env e = match e with
+    | {pexpr_desc = PEvars _} -> 
+      let exp,b = expr env e in 
+        begin
+        match exp with 
+          |{expr_desc=TEblock [e1;e2]}-> [(e1,b);(e2,b)]
+          | _ -> [(exp,b)]
+        end
+    | _ -> [expr env e]
+                  
 
 and pexpr_to_expr env e = 
   let exp,rt = expr env e in exp
@@ -380,9 +411,9 @@ let phase1 = function
   | PDfunction _ -> ()
 
 
-let sizeof = function
-  | Tint | Tbool | Tstring | Tptr _ -> ()
-  | _ -> (* TODO *) assert false 
+let rec sizeof = function
+  | Tint | Tbool | Tstring | Tptr _ -> 8
+  | Tstruct s -> assert false
 
 (* 2. declare functions and type fields *)
 
