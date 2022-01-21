@@ -5,6 +5,15 @@ main:
 	xorq %rax, %rax
 	ret
 F_main:
+	pushq %rbp
+	movq %rsp, %rbp
+	movq $S_1, %rdi
+	xorq %rax, %rax
+	call printf
+E_main:
+	movq %rbp, %rsp
+	popq %rbp
+	ret
 
 print_int:
         movq    %rdi, %rsi
@@ -15,3 +24,5 @@ print_int:
 	.data
 S_int:
 	.string "%ld"
+S_1:
+	.string "Hello, world\n"

@@ -278,7 +278,7 @@ and expr_desc env loc = function
     (id_var_entry_bloc := !id_var;
     let l = List.map (traitement_block env) el in 
       let l = List.flatten l in
-      List.iter (fun ({expr_desc=e},b) -> debug_expr e) l;
+      (*List.iter (fun (e,b) -> debug_expr e.expr_desc) l;*)
       let l_expr, rt = list_block l in
         env_f := old_env; id_var_entry_bloc := old_entry_var;
         TEblock l_expr, tvoid, rt)
@@ -335,7 +335,7 @@ and traitement_block env e = match e with
       let exp,b = expr env e in 
         begin
         match exp with 
-          |{expr_desc=TEblock [e1;e2]}-> print_string "transformation block \n"; [(e1,b);(e2,b)]
+          |{expr_desc=TEblock [e1;e2]}-> [(e1,b);(e2,b)]
           | _ -> [(exp,b)]
         end
     | _ -> [expr env e]
@@ -412,9 +412,12 @@ let phase1 = function
   | PDfunction _ -> ()
 
 
-let sizeof = function
+let rec sizeof = function
   | Tint | Tbool | Tstring | Tptr _ -> 8
-  | Tstruct s -> assert false
+  | Tstruct s -> Hashtbl.fold sizeof_fields (s.s_fields) 0
+  | Tmany l -> List.fold_left (fun init x -> (sizeof x) + init) 0 l
+and sizeof_fields key field init = 
+  (sizeof (field.f_typ)) + init
 
 (* 2. declare functions and type fields *)
 

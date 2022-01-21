@@ -2,10 +2,10 @@
 # OCAMLPARAM: unset
 # Workspace root: "/home/maena/Documents/Etude/ENS Paris-Saclay/L3/S1/Projet
 # prog/Compilateur/projet_GOCass/src"
-$ /usr/bin/nproc > /tmp/dune708cb2.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/duneedc684.output 2> /dev/null
 # Auto-detected concurrency: 4
 # disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dune79883b.output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune24e168.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -106,74 +106,18 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune79883b.output
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl typing.ml) > _build/default/.main.eobjs/typing.ml.d
-$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/typing.cmo -c -impl typing.ml)
-> File "typing.ml", line 415, characters 13-92:
-> 415 | .............function
-> 416 |   | Tint | Tbool | Tstring | Tptr _ -> 8
-> 417 |   | Tstruct s -> assert false
-> Warning 8: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> Tmany _
-$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/rewrite.cmo -c -impl rewrite.ml)
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compile.ml) > _build/default/.main.eobjs/compile.ml.d
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/compile.cmo -c -impl compile.ml)
-> File "compile.ml", line 130, characters 6-161:
-> 130 | ......match op with
-> 131 |         | Blt -> t1 ++ jl l1 ++ t2
-> 132 |         | Ble -> t1 ++ jle l1 ++ t2
-> 133 |         | Bgt -> t1 ++ jg l1 ++ t2
-> 134 |         | Bge -> t1 ++ jge l1 ++ t2
-> Warning 8: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Badd|Bsub|Bmul|Bdiv|Bmod|Beq|Bne|Band|Bor)
-> File "compile.ml", line 139, characters 4-426:
-> 139 | ....match op with
-> 140 |       | Badd -> t ++ popq rbx ++ addq (reg rbx) (reg rdi)
-> 141 |       | Bsub -> t ++ movq (reg rdi) (reg rbx) ++ popq rdi ++ subq (reg rbx) (reg rdi)
-> 142 |       | Bmul -> t ++ popq rbx ++ imulq (reg rbx) (reg rdi)
-> 143 |       | Bdiv -> t ++ popq rax ++ movq (imm 0) (reg rdx) ++ idivq (reg rdi) ++ movq (reg rax) (reg rdi)
-> 144 |       | Bmod -> t ++ popq rax ++ movq (imm 0) (reg rdx) ++ idivq (reg rdi) ++ movq (reg rdx) (reg rdi)
-> Warning 8: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Beq|Bne|Blt|Ble|Bgt|Bge|Band|Bor)
-> File "compile.ml", line 146, characters 13-28:
-> 146 |   | TEbinop (Beq | Bne as op, e1, e2) ->
+> File "compile.ml", line 149, characters 13-28:
+> 149 |   | TEbinop (Beq | Bne as op, e1, e2) ->
 >                    ^^^^^^^^^^^^^^^
 > Warning 26: unused variable op.
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/typing.cmx -c -impl typing.ml)
-> File "typing.ml", line 415, characters 13-92:
-> 415 | .............function
-> 416 |   | Tint | Tbool | Tstring | Tptr _ -> 8
-> 417 |   | Tstruct s -> assert false
-> Warning 8: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> Tmany _
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -o main.bc .main.eobjs/byte/lib.cmo .main.eobjs/byte/typing.cmo .main.eobjs/byte/x86_64.cmo .main.eobjs/byte/compile.cmo .main.eobjs/byte/parser.cmo .main.eobjs/byte/lexer.cmo .main.eobjs/byte/pretty.cmo .main.eobjs/byte/rewrite.cmo .main.eobjs/byte/main.cmo)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/rewrite.cmx -c -impl rewrite.ml)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/compile.cmx -c -impl compile.ml)
-> File "compile.ml", line 130, characters 6-161:
-> 130 | ......match op with
-> 131 |         | Blt -> t1 ++ jl l1 ++ t2
-> 132 |         | Ble -> t1 ++ jle l1 ++ t2
-> 133 |         | Bgt -> t1 ++ jg l1 ++ t2
-> 134 |         | Bge -> t1 ++ jge l1 ++ t2
-> Warning 8: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Badd|Bsub|Bmul|Bdiv|Bmod|Beq|Bne|Band|Bor)
-> File "compile.ml", line 139, characters 4-426:
-> 139 | ....match op with
-> 140 |       | Badd -> t ++ popq rbx ++ addq (reg rbx) (reg rdi)
-> 141 |       | Bsub -> t ++ movq (reg rdi) (reg rbx) ++ popq rdi ++ subq (reg rbx) (reg rdi)
-> 142 |       | Bmul -> t ++ popq rbx ++ imulq (reg rbx) (reg rdi)
-> 143 |       | Bdiv -> t ++ popq rax ++ movq (imm 0) (reg rdx) ++ idivq (reg rdi) ++ movq (reg rax) (reg rdi)
-> 144 |       | Bmod -> t ++ popq rax ++ movq (imm 0) (reg rdx) ++ idivq (reg rdi) ++ movq (reg rdx) (reg rdi)
-> Warning 8: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Beq|Bne|Blt|Ble|Bgt|Bge|Band|Bor)
-> File "compile.ml", line 146, characters 13-28:
-> 146 |   | TEbinop (Beq | Bne as op, e1, e2) ->
+> File "compile.ml", line 149, characters 13-28:
+> 149 |   | TEbinop (Beq | Bne as op, e1, e2) ->
 >                    ^^^^^^^^^^^^^^^
 > Warning 26: unused variable op.
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -o main.exe .main.eobjs/native/lib.cmx .main.eobjs/native/typing.cmx .main.eobjs/native/x86_64.cmx .main.eobjs/native/compile.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/pretty.cmx .main.eobjs/native/rewrite.cmx .main.eobjs/native/main.cmx)

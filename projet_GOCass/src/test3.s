@@ -4,24 +4,28 @@ main:
 	call F_main
 	xorq %rax, %rax
 	ret
+F_tanguy:
+	pushq %rbp
+	movq %rsp, %rbp
+	movq 16(%rbp), %rdi
+	pushq %rdi
+	movq 24(%rbp), %rdi
+	popq %rbx
+	addq %rbx, %rdi
+	jmp E_tanguy
+E_tanguy:
+	movq %rbp, %rsp
+	popq %rbp
+	ret
 F_main:
 	pushq %rbp
 	movq %rsp, %rbp
-	pushq $0
-	pushq $0
-	pushq $0
-	movq $3, %rdi
-	movq %rdi, 0(%rbp)
-	pushq $0
+	movq $10, %rdi
+	pushq %rdi
 	movq $5, %rdi
-	movq %rdi, 0(%rbp)
-	movq 0(%rbp), %rdi
-	movq %rdi, 0(%rbp)
-	movq 0(%rbp), %rdi
-	movq %rdi, 0(%rbp)
-	movq 0(%rbp), %rdi
-	call print_int
-	movq 0(%rbp), %rdi
+	pushq %rdi
+	call F_tanguy
+	addq $16, %rsp
 	call print_int
 E_main:
 	movq %rbp, %rsp

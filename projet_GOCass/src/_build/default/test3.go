@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
+func tanguy(a int, b int) int { return a + b }
 func main() {
-	var x, y = 3, 5
-	fmt.Print(x, y)
+	fmt.Print(tanguy(10, 5))
 }
