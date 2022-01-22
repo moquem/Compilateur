@@ -174,8 +174,10 @@ and expr_desc env loc = function
         | _ -> error loc "expected : pointeur type"
     end
 
-  | PEcall ({id = "fmt.Print"}, el) -> (fmt_used := true; let tel = List.map (pexpr_to_expr env) el in TEprint tel, tvoid, false)
-
+  | PEcall ({id = "fmt.Print"}, el) -> 
+      fmt_used := true; 
+      let tel = List.map (pexpr_to_expr env) el in TEprint tel, tvoid, false
+      
   | PEcall ({id="new"}, [{pexpr_desc=PEident {id}}]) ->
      let ty = match id with
        | "int" -> Tint | "bool" -> Tbool | "string" -> Tstring
@@ -422,11 +424,15 @@ and sizeof_fields key field init =
 (* 2. declare functions and type fields *)
 
 let field_to_tfield l_field struct_fields = 
-  let rec aux = function
+  let rec aux size_ofs = function
     | [] -> ()
     | ({id;loc},typ)::q -> if mem struct_fields id then raise (Error (loc, "field already existing"))
-                            else add struct_fields id {f_name = id;f_typ = type_type loc typ;f_ofs = 0}; aux q
-  in aux l_field
+                            else 
+                            let typ = type_type loc typ in
+                            let ofs = sizeof typ
+                            in
+                            add struct_fields id {f_name = id;f_typ = typ;f_ofs = ofs+size_ofs}; aux (size_ofs + ofs) q 
+  in aux 0 l_field 
 
 let rec pparam_to_tparam = function
   | [] -> []

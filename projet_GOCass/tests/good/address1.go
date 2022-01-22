@@ -1,4 +1,5 @@
 package main
+
 import "fmt"
 
 type T struct {
@@ -17,4 +18,3 @@ func main() {
 	fmt.Print(*p)
 	fmt.Print("\n")
 }
-

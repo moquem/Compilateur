@@ -9,13 +9,13 @@ F_main:
 	movq %rsp, %rbp
 	pushq $0
 	movq $S_1, %rdi
-	movq %rdi, 0(%rbp)
-	pushq $0
-	leaq 0(%rbp), %rdi
 	movq %rdi, -8(%rbp)
+	pushq $0
+	leaq -8(%rbp), %rdi
+	movq %rdi, -16(%rbp)
 	movq $4, %rdi
 	call print_int
-	movq -8(%rbp), %rdi
+	movq -16(%rbp), %rdi
 	movq 0(%rdi), %rdi
 	xorq %rax, %rax
 	call printf
@@ -25,13 +25,13 @@ F_main:
 	xorq %rax, %rax
 	call printf
 	movq $S_3, %rdi
-	movq %rdi, 0(%rbp)
-	leaq 0(%rbp), %rdi
 	movq %rdi, -8(%rbp)
+	leaq -8(%rbp), %rdi
+	movq %rdi, -16(%rbp)
 	movq $S_5, %rdi
 	xorq %rax, %rax
 	call printf
-	movq -8(%rbp), %rdi
+	movq -16(%rbp), %rdi
 	movq 0(%rdi), %rdi
 	xorq %rax, %rax
 	call printf

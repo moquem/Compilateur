@@ -11,17 +11,17 @@ F_main:
 	pushq $0
 	pushq $0
 	movq $1, %rdi
-	movq %rdi, -16(%rbp)
+	movq %rdi, -24(%rbp)
 	pushq $0
 	movq $2, %rdi
-	movq %rdi, -24(%rbp)
-	movq -16(%rbp), %rdi
-	movq %rdi, 0(%rbp)
+	movq %rdi, -32(%rbp)
 	movq -24(%rbp), %rdi
 	movq %rdi, -8(%rbp)
+	movq -32(%rbp), %rdi
+	movq %rdi, -16(%rbp)
 	popq %rdi
 	popq %rdi
-	movq 0(%rbp), %rdi
+	movq -8(%rbp), %rdi
 	call print_int
 	popq %rdi
 	popq %rdi
