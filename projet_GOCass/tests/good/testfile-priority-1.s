@@ -10,24 +10,24 @@ F_main:
 	pushq $0
 	movq $24, %rdi
 	call malloc
+	movq %rax, %rdi
 	movq %rdi, -8(%rbp)
-	leaq -8(%rbp), %rdi
-	movq 8(%rdi), %rdi
+	movq -8(%rbp), %rdi
+	leaq 0(%rdi), %rdi
 	pushq %rdi
-	leaq -8(%rbp), %rdi
-	movq 24(%rdi), %rdi
+	movq -8(%rbp), %rdi
 	popq %rbx
-	movq %rbx, 0(%rdi)
-	leaq -8(%rbp), %rdi
+	movq %rbx, 16(%rdi)
+	movq -8(%rbp), %rdi
+	movq 0(%rdi), %rdi
+	negq %rdi
+	call print_int
+	movq -8(%rbp), %rdi
 	movq 8(%rdi), %rdi
 	negq %rdi
 	call print_int
-	leaq -8(%rbp), %rdi
+	movq -8(%rbp), %rdi
 	movq 16(%rdi), %rdi
-	negq %rdi
-	call print_int
-	leaq -8(%rbp), %rdi
-	movq 24(%rdi), %rdi
 	movq 0(%rdi), %rdi
 	call print_int
 	popq %rdi

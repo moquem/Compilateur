@@ -8,9 +8,7 @@ type T struct {
 
 func main() {
 	t := new(T)
-	fmt.Print("coucou\n")
 	fmt.Print(t.y)
-	fmt.Print("coucou")
 	fmt.Print("\n")
 	t.x = 1
 	p := &t.x

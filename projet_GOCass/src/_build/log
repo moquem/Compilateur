@@ -2,10 +2,10 @@
 # OCAMLPARAM: unset
 # Workspace root: "/home/maena/Documents/Etude/ENS Paris-Saclay/L3/S1/Projet
 # prog/Compilateur/projet_GOCass/src"
-$ /usr/bin/nproc > /tmp/dunec09fe3.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/dune182650.output 2> /dev/null
 # Auto-detected concurrency: 4
 # disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dune347983.output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune22e41c.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -109,7 +109,7 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune347983.output
 $ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compile.ml) > _build/default/.main.eobjs/compile.ml.d
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/compile.cmo -c -impl compile.ml)
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
 $ (cd _build/default && /usr/bin/ocamlc.opt -g -o main.bc .main.eobjs/byte/lib.cmo .main.eobjs/byte/typing.cmo .main.eobjs/byte/x86_64.cmo .main.eobjs/byte/compile.cmo .main.eobjs/byte/parser.cmo .main.eobjs/byte/lexer.cmo .main.eobjs/byte/pretty.cmo .main.eobjs/byte/rewrite.cmo .main.eobjs/byte/main.cmo)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/compile.cmx -c -impl compile.ml)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -g -o main.exe .main.eobjs/native/lib.cmx .main.eobjs/native/typing.cmx .main.eobjs/native/x86_64.cmx .main.eobjs/native/compile.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/pretty.cmx .main.eobjs/native/rewrite.cmx .main.eobjs/native/main.cmx)

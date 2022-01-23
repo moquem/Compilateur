@@ -25,6 +25,8 @@ F_main:
 	jne L_2
 	jmp L_1
 L_2:
+	movq $S_2, %rdi
+	movq %rdi, %rsi
 	movq $S_1, %rdi
 	xorq %rax, %rax
 	call printf
@@ -42,11 +44,15 @@ L_1:
 	jne L_4
 	jmp L_3
 L_4:
-	movq $S_2, %rdi
+	movq $S_3, %rdi
+	movq %rdi, %rsi
+	movq $S_1, %rdi
 	xorq %rax, %rax
 	call printf
 L_3:
-	movq $S_3, %rdi
+	movq $S_4, %rdi
+	movq %rdi, %rsi
+	movq $S_1, %rdi
 	xorq %rax, %rax
 	call printf
 	popq %rdi
@@ -65,8 +71,10 @@ print_int:
 S_int:
 	.string "%ld"
 S_2:
-	.string "b"
-S_3:
-	.string "\n"
-S_1:
 	.string "a"
+S_4:
+	.string "\n"
+S_3:
+	.string "b"
+S_1:
+	.string "%s"

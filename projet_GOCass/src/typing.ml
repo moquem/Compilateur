@@ -431,7 +431,7 @@ let field_to_tfield l_field struct_fields =
                             let typ = type_type loc typ in
                             let ofs = sizeof typ
                             in
-                            add struct_fields id {f_name = id;f_typ = typ;f_ofs = ofs+size_ofs}; aux (size_ofs + ofs) q 
+                            add struct_fields id {f_name = id;f_typ = typ;f_ofs = size_ofs}; aux (size_ofs + ofs) q 
   in aux 0 l_field 
 
 let rec pparam_to_tparam = function

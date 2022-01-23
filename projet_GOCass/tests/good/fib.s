@@ -94,6 +94,8 @@ L_7:
 	call F_fib
 	addq $8, %rsp
 	call print_int
+	movq $S_2, %rdi
+	movq %rdi, %rsi
 	movq $S_1, %rdi
 	xorq %rax, %rax
 	call printf
@@ -120,5 +122,7 @@ print_int:
 	.data
 S_int:
 	.string "%ld"
-S_1:
+S_2:
 	.string "\n"
+S_1:
+	.string "%s"

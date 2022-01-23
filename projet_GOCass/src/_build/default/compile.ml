@@ -42,12 +42,14 @@ let debug = ref false
 let tvoid = Tmany []
 
 let strings = Hashtbl.create 32
+let string2 = Hashtbl.create 32
 let alloc_string =
   let r = ref 0 in
   fun s ->
     incr r;
     let l = "S_" ^ string_of_int !r in
     Hashtbl.add strings l s;
+    Hashtbl.add string2 s l;
     l
 
 let malloc n = movq (imm n) (reg rdi) ++ call "malloc"
@@ -87,8 +89,12 @@ let rec expr env e = match e.expr_desc with
   | TEnil ->
     xorq (reg rdi) (reg rdi)
   | TEconstant (Cstring s) ->
-    let label = alloc_string s in
-    movq (ilab label) (reg rdi)
+    let l = Hashtbl.find_opt string2 s in
+    begin
+    match l with
+      | None -> let label = alloc_string s in movq (ilab label) (reg rdi)
+      | Some s -> movq (ilab s) (reg rdi)
+    end
   | TEbinop (Band, e1, e2) ->
     let l1,l2 = new_label(),new_label() in
     (expr env e1) 
@@ -155,7 +161,10 @@ let rec expr env e = match e.expr_desc with
         | Tint | Tbool -> expr env e1 ++ pushq (reg rdi) 
                   ++ expr env e2 ++ popq rbx ++ cmpq (reg rdi) (reg rbx) ++ sete (reg dil) 
                   ++ movzbq (reg dil) rdi
-        | Tstring -> assert false
+        | Tstring -> expr env e1 ++ pushq (reg rdi) ++ expr env e2 ++ popq rsi 
+                    ++ call "strcmp" ++ movq (reg rax) (reg rdi)
+                    ++ movq (imm 0) (reg rbx) ++ cmpq (reg rbx) (reg rdi)
+                    ++ sete (reg dil) ++ movzbq (reg dil) rdi
         | Tstruct t -> Hashtbl.fold (comparison_fields env e1 e2 op) t.s_fields nop
         | _ -> assert false
         end
@@ -165,6 +174,10 @@ let rec expr env e = match e.expr_desc with
         | Tint | Tbool -> expr env e1 ++ pushq (reg rdi) 
                   ++ expr env e2 ++ popq rbx ++ cmpq (reg rdi) (reg rbx) ++ setne (reg dil) 
                   ++ movzbq (reg dil) rdi
+        | Tstring -> expr env e1 ++ pushq (reg rdi) ++ expr env e2 ++ popq rsi   
+                    ++ call "strcmp" ++ movq (reg rax) (reg rdi)  
+                    ++ movq (imm 0) (reg rbx) ++ cmpq (reg rbx) (reg rdi)
+                    ++ setne (reg dil) ++ movzbq (reg dil) rdi   
         | Tstruct t -> Hashtbl.fold (comparison_fields env e1 e2 op) t.s_fields nop
         | _ -> assert false
         end
@@ -179,7 +192,7 @@ let rec expr env e = match e.expr_desc with
   match e1.expr_desc with
     | TEident x -> leaq (ind ~ofs:(x.v_pile) rbp) rdi
     | TEunop (Ustar, e) -> (expr env e)
-    | TEdot (e,f) -> expr env {expr_desc = TEdot (e,f);expr_typ=tvoid} 
+    | TEdot (e,{f_ofs=ofs}) -> expr env e ++ leaq (ind ~ofs:(ofs) rdi) rdi 
     | _ -> assert false
   end
   | TEunop (Ustar, e1) ->
@@ -215,6 +228,8 @@ let rec expr env e = match e.expr_desc with
   | TEident x -> movq (ind ~ofs:(x.v_pile) rbp) (reg rdi)
   | TEassign ([{expr_desc=TEident x}], [e1]) -> 
       (expr env e1) ++ movq (reg rdi) (ind ~ofs:(x.v_pile) rbp) 
+  | TEassign ([{expr_desc=TEdot (e1, {f_ofs=ofs})}], [e2]) -> 
+      (expr env e2) ++ pushq (reg rdi) ++ (expr env e1) ++ popq rbx ++ movq (reg rbx) (ind ~ofs:(ofs) rdi)
   | TEassign ([lv], [e1]) ->
       expr env e1 ++ pushq (reg rdi) 
       ++ expr env {expr_desc=TEunop(Uamp,lv);expr_typ=tvoid} 
@@ -222,7 +237,8 @@ let rec expr env e = match e.expr_desc with
   | TEassign (lv, el) ->
   begin
     match (lv, el) with
-    | h1::q1, h2::q2 -> (expr env {expr_desc=TEassign ([h1],[h2]);expr_typ=tvoid}) ++ (expr env {expr_desc=TEassign (q1,q2);expr_typ=tvoid})
+    | h1::q1, h2::q2 -> (expr env {expr_desc=TEassign ([h1],[h2]);expr_typ=tvoid}) 
+                        ++ (expr env {expr_desc=TEassign (q1,q2);expr_typ=tvoid})
     | _,_ -> nop
     end
   | TEblock el -> 
@@ -259,12 +275,12 @@ let rec expr env e = match e.expr_desc with
     ++ jmp l1 
     ++ label l2
   | TEnew ty ->
-    malloc (sizeof(ty))
+    malloc (sizeof(ty)) ++ movq (reg rax) (reg rdi)
   | TEcall (f, el) ->
     let l1 = List.fold_left (push_params env) nop el in
     l1 ++ call ("F_"^(f.fn_name)) ++ addq (imm ((List.length el)*8)) !%rsp
   | TEdot (e1, {f_ofs=ofs}) ->
-     (expr env {expr_desc=TEunop(Uamp,e1);expr_typ=tvoid}) ++ movq (ind ~ofs:(ofs) rdi) (reg rdi)
+     expr env e1 ++ movq (ind ~ofs:(ofs) rdi) (reg rdi)
   | TEvars _ ->
      assert false (* fait dans block *)
   | TEreturn [] ->
@@ -283,7 +299,8 @@ let rec expr env e = match e.expr_desc with
 
 and decl_var env text = function
   | [] -> text
-  | v::q -> (v.v_pile <- !env.next_local-8); env := {exit_label = !env.exit_label; next_local = !env.next_local - 8}; decl_var env (text ++ pushq (imm 0)) q
+  | v::q -> (v.v_pile <- !env.next_local-8); env := {exit_label = !env.exit_label; next_local = !env.next_local - 8}; 
+            decl_var env (text ++ pushq (imm 0)) q
 
 and push_params env init e =
   init ++ (expr env e) ++ (pushq (reg rdi))

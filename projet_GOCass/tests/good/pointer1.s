@@ -16,6 +16,8 @@ F_main:
 	movq -16(%rbp), %rdi
 	movq 0(%rdi), %rdi
 	call print_int
+	movq $S_2, %rdi
+	movq %rdi, %rsi
 	movq $S_1, %rdi
 	xorq %rax, %rax
 	call printf
@@ -28,6 +30,8 @@ F_main:
 	movq 0(%rdi), %rdi
 	call print_int
 	movq $S_2, %rdi
+	movq %rdi, %rsi
+	movq $S_1, %rdi
 	xorq %rax, %rax
 	call printf
 	popq %rdi
@@ -49,4 +53,4 @@ S_int:
 S_2:
 	.string "\n"
 S_1:
-	.string "\n"
+	.string "%s"

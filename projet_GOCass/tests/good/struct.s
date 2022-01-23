@@ -10,59 +10,62 @@ F_main:
 	pushq $0
 	movq $16, %rdi
 	call malloc
+	movq %rax, %rdi
 	movq %rdi, -8(%rbp)
 	movq $42, %rdi
 	pushq %rdi
-	leaq -8(%rbp), %rdi
-	movq 8(%rdi), %rdi
+	movq -8(%rbp), %rdi
 	popq %rbx
 	movq %rbx, 0(%rdi)
-	leaq -8(%rbp), %rdi
-	movq 8(%rdi), %rdi
+	movq -8(%rbp), %rdi
+	movq 0(%rdi), %rdi
 	call print_int
-	leaq -8(%rbp), %rdi
-	movq 16(%rdi), %rdi
+	movq -8(%rbp), %rdi
+	movq 8(%rdi), %rdi
 	pushq %rdi
 	movq $S_1, %rdi
 	popq %rsi
 	xorq %rax, %rax
 	call printf
+	movq $S_3, %rdi
+	movq %rdi, %rsi
 	movq $S_2, %rdi
 	xorq %rax, %rax
 	call printf
 	movq $16, %rdi
 	call malloc
+	movq %rax, %rdi
 	pushq %rdi
-	leaq -8(%rbp), %rdi
-	movq 16(%rdi), %rdi
+	movq -8(%rbp), %rdi
 	popq %rbx
-	movq %rbx, 0(%rdi)
+	movq %rbx, 8(%rdi)
 	pushq $0
-	leaq -8(%rbp), %rdi
-	movq 16(%rdi), %rdi
+	movq -8(%rbp), %rdi
+	movq 8(%rdi), %rdi
 	movq %rdi, -16(%rbp)
 	movq $43, %rdi
 	pushq %rdi
-	leaq -16(%rbp), %rdi
-	movq 8(%rdi), %rdi
+	movq -16(%rbp), %rdi
 	popq %rbx
 	movq %rbx, 0(%rdi)
-	leaq -8(%rbp), %rdi
-	movq 8(%rdi), %rdi
+	movq -8(%rbp), %rdi
+	movq 0(%rdi), %rdi
 	call print_int
-	leaq -8(%rbp), %rdi
-	movq 16(%rdi), %rdi
+	movq -8(%rbp), %rdi
 	movq 8(%rdi), %rdi
+	movq 0(%rdi), %rdi
 	call print_int
-	leaq -8(%rbp), %rdi
-	movq 16(%rdi), %rdi
-	movq 16(%rdi), %rdi
+	movq -8(%rbp), %rdi
+	movq 8(%rdi), %rdi
+	movq 8(%rdi), %rdi
 	pushq %rdi
-	movq $S_3, %rdi
+	movq $S_1, %rdi
 	popq %rsi
 	xorq %rax, %rax
 	call printf
-	movq $S_4, %rdi
+	movq $S_3, %rdi
+	movq %rdi, %rsi
+	movq $S_2, %rdi
 	xorq %rax, %rax
 	call printf
 	popq %rdi
@@ -82,10 +85,8 @@ print_int:
 S_int:
 	.string "%ld"
 S_2:
-	.string "\n"
-S_4:
-	.string "\n"
+	.string "%s"
 S_3:
-	.string "%p"
+	.string "\n"
 S_1:
 	.string "%p"

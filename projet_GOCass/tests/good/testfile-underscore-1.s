@@ -41,6 +41,8 @@ F_main:
 	popq %rbx
 	addq %rbx, %rdi
 	call print_int
+	movq $S_2, %rdi
+	movq %rdi, %rsi
 	movq $S_1, %rdi
 	xorq %rax, %rax
 	call printf
@@ -62,5 +64,7 @@ print_int:
 	.data
 S_int:
 	.string "%ld"
-S_1:
+S_2:
 	.string "\n"
+S_1:
+	.string "%s"

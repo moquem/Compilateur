@@ -17,25 +17,35 @@ F_main:
 	call print_int
 	movq -16(%rbp), %rdi
 	movq 0(%rdi), %rdi
+	movq %rdi, %rsi
+	movq $S_2, %rdi
 	xorq %rax, %rax
 	call printf
 	movq $2, %rdi
 	call print_int
+	movq $S_3, %rdi
+	movq %rdi, %rsi
 	movq $S_2, %rdi
 	xorq %rax, %rax
 	call printf
-	movq $S_3, %rdi
+	movq $S_4, %rdi
 	movq %rdi, -8(%rbp)
 	leaq -8(%rbp), %rdi
 	movq %rdi, -16(%rbp)
-	movq $S_5, %rdi
+	movq $S_6, %rdi
+	movq %rdi, %rsi
+	movq $S_2, %rdi
 	xorq %rax, %rax
 	call printf
 	movq -16(%rbp), %rdi
 	movq 0(%rdi), %rdi
+	movq %rdi, %rsi
+	movq $S_2, %rdi
 	xorq %rax, %rax
 	call printf
-	movq $S_4, %rdi
+	movq $S_5, %rdi
+	movq %rdi, %rsi
+	movq $S_2, %rdi
 	xorq %rax, %rax
 	call printf
 	popq %rdi
@@ -55,12 +65,14 @@ print_int:
 S_int:
 	.string "%ld"
 S_2:
-	.string "\n"
-S_4:
-	.string ". I'm afraid I can't do that.\n"
-S_5:
+	.string "%s"
+S_6:
 	.string "I'm sorry, "
-S_3:
+S_4:
 	.string "Dave"
+S_5:
+	.string ". I'm afraid I can't do that.\n"
+S_3:
+	.string "\n"
 S_1:
 	.string ""
